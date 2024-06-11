@@ -62,11 +62,11 @@
                                 <div class="row mb-4">
                                     <div class="col-md-3">
                                         <label for="from_date">From Date:</label>
-                                        <input class="form-control" type="date" id="from_date">
+                                        <input class="form-control" type="date" id="from_date" value="{{ date('Y-m-01', strtotime('-2 months')) }}">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="to_date">To Date:</label>
-                                        <input class="form-control" type="date" id="to_date">
+                                        <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-d') }}">
                                     </div>
                                     <div class="col-md-4 align-self-end">
                                         <button id="search" class="btn btn-primary">Search</button>
@@ -139,6 +139,7 @@
     <script>
         $(document).ready(function() {
             var openingBalance = 0.00; 
+            
             // Initialize DataTable
             var table = $('#voucher-datatable').DataTable({
                 processing: true,

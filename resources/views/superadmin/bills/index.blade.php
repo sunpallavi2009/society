@@ -117,8 +117,8 @@
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
                         d.group = "{{ $group }}";
-                        //var billDate = $('#bill_date').val();
-                         var billDate = '2019-09-09'; 
+                        var billDate = $('#bill_date').val();
+                        //  var billDate = '2019-09-09'; 
                         // console.log('Bill Date:', billDate); 
                         d.bill_date = billDate;
                     }
