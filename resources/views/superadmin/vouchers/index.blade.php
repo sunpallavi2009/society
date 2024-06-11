@@ -152,84 +152,83 @@
                         d.to_date = $('#to_date').val();
                     },
                     dataSrc: function(json) {
-                            var openingBalance = 0.00;
+                        var openingBalance = 0.00;
 
-                            if (json.data.length > 0) {
-                                var balance = parseFloat(json.data[0].balance_amount);
-                                var amount = parseFloat(json.data[0].amount);
+                        if (json.data.length > 0) {
+                            var balance = parseFloat(json.data[0].balance_amount);
+                            var amount = parseFloat(json.data[0].amount);
 
-                                if (isNaN(balance) || isNaN(amount)) {
-                                    openingBalance = 0.00;
-                                } else {
-                                    openingBalance = balance - amount; // Calculate opening balance using the formula
-                                }
+                            if (isNaN(balance) || isNaN(amount)) {
+                                openingBalance = 0.00;
+                            } else {
+                                openingBalance = balance - amount; // Calculate opening balance using the formula
                             }
-
-                            // Prepend opening balance row to the data
-                            var openingBalanceRow = {
-                                voucher_date: '', 
-                                credit_ledger: '<b>Opening Balance</b>', 
-                                type: '', 
-                                voucher_number: '', 
-                                debit: openingBalance >= 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
-                                credit: openingBalance < 0 ? openingBalance.toFixed(2) : '0.00',
-                                balance_amount: '',
-                            };
-
-                            if (openingBalance === 0) {
-                                openingBalanceRow.debit = '0.00';
-                                openingBalanceRow.credit = '0.00';
-                            }
-
-                            json.data.unshift(openingBalanceRow);
-                            return json.data;
                         }
 
+                        // Prepend opening balance row to the data
+                        var openingBalanceRow = {
+                            voucher_date: '', 
+                            credit_ledger: '<b>Opening Balance</b>', 
+                            type: '', 
+                            voucher_number: '', 
+                            debit: openingBalance < 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
+                            credit: openingBalance >= 0 ? openingBalance.toFixed(2) : '0.00',
+                            balance_amount: '',
+                        };
+
+                        if (openingBalance === 0) {
+                            openingBalanceRow.debit = '0.00';
+                            openingBalanceRow.credit = '0.00';
+                        }
+
+                        json.data.unshift(openingBalanceRow);
+                        return json.data;
+                    }
                 },
                 columns: [
-                                 {data: 'voucher_date', name: 'voucher_date'},
-                                {data: 'credit_ledger', name: 'credit_ledger'},
-                                {
-                                    data: 'type', 
-                                    name: 'type',
-                                    render: function(data, type, row, meta) {
-                                        if (data === 'Bill' || data === 'Rcpt') {
-                                            var companyGuid = '{{ $society->guid }}';
-                                            var ledgerGuid = row.ledger_guid;
-                                            var vchDate = moment(row.voucher_date).format('DD/MM/YYYY');
-                                            var vchNumber = row.voucher_number;
-                                            var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
-                                                '&ledger_guid=' + ledgerGuid +
-                                                '&vch_date=' + vchDate +
-                                                '&vch_number=' + vchNumber +
-                                                '&vch_type=' + data;
+                    {data: 'voucher_date', name: 'voucher_date'},
+                    {data: 'credit_ledger', name: 'credit_ledger'},
+                    {
+                        data: 'type', 
+                        name: 'type',
+                        render: function(data, type, row, meta) {
+                            if (data === 'Bill' || data === 'Rcpt') {
+                                var companyGuid = '{{ $society->guid }}';
+                                var ledgerGuid = row.ledger_guid;
+                                var vchDate = moment(row.voucher_date).format('DD/MM/YYYY');
+                                var vchNumber = row.voucher_number;
+                                var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
+                                    '&ledger_guid=' + ledgerGuid +
+                                    '&vch_date=' + vchDate +
+                                    '&vch_number=' + vchNumber +
+                                    '&vch_type=' + data;
 
-                                            return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                                        } else {
-                                            return data;
-                                        }
-                                    }
-                                },
-                                {data: 'voucher_number', name: 'voucher_number'},
-                                {data: 'debit', name: 'debit'},
-                                {data: 'credit', name: 'credit'},
-                                {
-                                    data: 'balance_amount',
-                                    name: 'balance_amount',
-                                    render: function(data, type, row, meta) {
-                                        if (isNaN(data) || data === null) {
-                                            return "0.00";
-                                        }
-                                        var balance_amount = parseFloat(data);
-                                        if (balance_amount === 0) {
-                                            return "0.00";
-                                        }
-                                        balance_amount = balance_amount.toFixed(2); // Format to 2 decimal places
-                                        balance_amount = balance_amount.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
-                                        return balance_amount; // Return formatted balance without currency symbol
-                                    }
-                                }
-                            ],
+                                return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
+                    {data: 'voucher_number', name: 'voucher_number'},
+                    {data: 'debit', name: 'debit'},
+                    {data: 'credit', name: 'credit'},
+                    {
+                        data: 'balance_amount',
+                        name: 'balance_amount',
+                        render: function(data, type, row, meta) {
+                            if (isNaN(data) || data === null) {
+                                return "0.00";
+                            }
+                            var balance_amount = parseFloat(data);
+                            if (balance_amount === 0) {
+                                return "0.00";
+                            }
+                            balance_amount = balance_amount.toFixed(2); // Format to 2 decimal places
+                            balance_amount = balance_amount.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
+                            return balance_amount; // Return formatted balance without currency symbol
+                        }
+                    }
+                ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
                     {
@@ -259,21 +258,14 @@
                             }
                         }
                     },
-                    'colvis',
-                    // {
-                    //     extend: 'searchBuilder',
-                    //     config: {
-                    //         columns: [0, 1, 2, 3, 4, 5], // Specify the searchable columns
-                    //     }
-                    // }
+                    'colvis'
                 ],
                 order: [[0, 'asc']],
                 paging: false, // Remove pagination
                 drawCallback: function(settings) {
-                                calculateClosingBalance();
-                                calculateAdditionalSum();
-                            }
-
+                    calculateClosingBalance();
+                    calculateAdditionalSum();
+                }
             });
 
             $('#search').click(function() {
@@ -312,7 +304,6 @@
                 }
             }
 
-
             function calculateAdditionalSum() {
                 var additionalSumDebit = 0.00;
                 var additionalSumCredit = 0.00;
@@ -338,10 +329,9 @@
             calculateClosingBalance();
             calculateAdditionalSum();
 
-    
             // Hide DataTable buttons initially
             $('.dt-buttons').hide();
-    
+
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function () {
                 $('.dt-buttons').show();
@@ -349,6 +339,7 @@
                 $('.dt-buttons').hide();
             });
         });
+
     </script>
     
     
