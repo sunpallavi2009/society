@@ -180,7 +180,7 @@
                 <h6 class="f-18 mb-0 dropdown-title">Cart</h6>
                 <ul>
                   <li>
-                    <div class="d-flex"><img class="img-fluid b-r-5 img-60" src="{{ asset('assets/images/ecommerce/06.jpg') }}../assets/images/ecommerce/06.jpg" alt="">
+                    <div class="d-flex"><img class="img-fluid b-r-5 img-60" src="{{ asset('assets/images/ecommerce/06.jpg') }}" alt="">
                       <div class="flex-grow-1"><span>Winter T-shirt</span>
                         <h6>1 X $ 299.00</h6>
                       </div>

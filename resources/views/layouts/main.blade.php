@@ -30,7 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/scrollbar.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/animate.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/calendar.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}">
+    {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}"> --}}
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/date-picker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/vector-map.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/fullcalender.css') }}">
@@ -44,11 +44,20 @@
     <link id="color" rel="stylesheet" href="{{ asset('assets/css/color-1.css') }}" media="screen">
     <!-- Responsive css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
+
+
+   <!-- DataTables CSS -->
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
+   <!-- DataTables Buttons CSS -->
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+   <!-- DataTables SearchBuilder CSS -->
+   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchbuilder/1.3.0/css/searchBuilder.dataTables.min.css">
+
     <style>
         
   </style>
   </head>
-  <body onload="startTime()"> 
+  <body > 
     <!-- loader starts-->
     <div class="loader-wrapper">
       <div class="loader">    
@@ -73,7 +82,6 @@
 
 
     @include('layouts.partials.footer')
-
 
      <!-- latest jquery-->
      <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
@@ -117,14 +125,16 @@
      <script src="{{ asset('assets/js/datepicker/date-picker/datepicker.custom.js') }}"></script>
      <script src="{{ asset('assets/js/typeahead/handlebars.js') }}"></script>
      <script src="{{ asset('assets/js/typeahead/typeahead.bundle.js') }}"></script>
-     <script src="{{ asset('assets/js/typeahead/typeahead.custom.js') }}../assets/js/"></script>
-     <script src="{{ asset('assets/js/typeahead-search/handlebars.js') }}../assets/js/"></script>
-     <script src="{{ asset('assets/js/typeahead-search/typeahead-custom.js') }}../assets/js/"></script>
-     <script src="{{ asset('assets/js/vector-map/map-vector.js') }}../assets/js/"></script>
+     <script src="{{ asset('assets/js/typeahead/typeahead.custom.js') }}"></script>
+     <script src="{{ asset('assets/js/typeahead-search/handlebars.js') }}"></script>
+     <script src="{{ asset('assets/js/typeahead-search/typeahead-custom.js') }}"></script>
+     <script src="{{ asset('assets/js/vector-map/map-vector.js') }}"></script>
      <!-- Plugins JS Ends-->
      <!-- Theme js-->
      <script src="{{ asset('assets/js/script.js') }}"></script>
      <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
      <!-- Plugin used-->
+
+     @stack('javascript')
    </body>
  </html>

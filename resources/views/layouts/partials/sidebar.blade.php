@@ -37,13 +37,23 @@
                   </li>
 
                   <li class="sidebar-list">
-                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('dashboard') }}">
+                    <a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}" href="{{ route('dashboard') }}">
                       <svg class="stroke-icon">
                         <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                       </svg>
                     <svg class="fill-icon">
                       <use href="{{ asset('assets/svg/icon-sprite.svg#fill-home') }}"></use>
                     </svg><span>Dashboard</span></a>
+                  </li>
+
+                  <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav {{ Route::currentRouteName() == 'society.index' ? 'active' : '' }}" href="{{ route('society.index') }}">
+                      <svg class="stroke-icon">
+                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-animation') }}"></use>
+                      </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ asset('assets/svg/icon-sprite.svg#fill-animation') }}"></use>
+                    </svg><span>Society</span></a>
                   </li>
                   
                   <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="#">

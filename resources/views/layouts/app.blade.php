@@ -36,16 +36,21 @@
    
         <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/animate.css') }}">
         <!-- Plugins css Ends-->
-    <!-- Bootstrap css-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/bootstrap.css') }}">
-    <!-- App css-->
+        <!-- Bootstrap css-->
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/bootstrap.css') }}">
+        <!-- App css-->
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/layout/_sidebar.scss') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
-    <link id="color" rel="stylesheet" href="{{ asset('assets/css/color-1.css') }}" media="screen">
-    <!-- Responsive css-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/layout/_sidebar.scss') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+        <link id="color" rel="stylesheet" href="{{ asset('assets/css/color-1.css') }}" media="screen">
+        <!-- Responsive css-->
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
 
+        <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/js-datatables/style.css') }}">
+
+        <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/buttons/1.7.1/css/buttons.dataTables.min.css">
+        <link rel="stylesheet" href="https://cdn.datatables.net/searchbuilder/1.3.0/css/searchBuilder.dataTables.min.css">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -76,8 +81,20 @@
 
         @include('layouts.partials.footer')
 
-         <!-- latest jquery-->
-        <script src="{{ asset('assets/js/jquery.min.js') }}"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+        <script src="https://cdn.datatables.net/1.10.21/js/jquery.dataTables.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/dataTables.buttons.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.flash.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.colVis.min.js"></script>
+        <script src="https://cdn.datatables.net/searchbuilder/1.3.0/js/dataTables.searchBuilder.min.js"></script>
+        
+        <!-- latest jquery-->
+        {{-- <script src="{{ asset('assets/js/jquery.min.js') }}"></script> --}}
         <!-- Bootstrap js-->
         <script src="{{ asset('assets/js/bootstrap/bootstrap.bundle.min.js') }}"></script>
         <!-- feather icon js-->
@@ -98,6 +115,11 @@
         <!-- Theme js-->
         <script src="{{ asset('assets/js/script.js') }}"></script>
         <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
+
+        
+        <script src="{{ asset('assets/js/js-datatables/simple-datatables@latest.js') }}"></script>
         <!-- Plugin used-->
+
+        @stack('javascript')
     </body>
 </html>
