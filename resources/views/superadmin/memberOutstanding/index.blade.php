@@ -275,12 +275,20 @@
             });
 
             // Search button
+            // Search button
             $('#search').click(function() {
                 var fromDate = $('#from_date').val();
                 var toDate = $('#to_date').val();
                 var url = "{{ route('memberOutstanding.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
+                
+                // Set the values of the DataTables search inputs
+                table.columns(3).search(fromDate).draw(); // 3 is the index of the 'From Date' column
+                table.columns(4).search(toDate).draw(); // 4 is the index of the 'To Date' column
+                
+                // Redirect to the URL
                 window.location.href = url;
             });
+
     
             // Hide DataTable buttons initially
             $('.dt-buttons').hide();
