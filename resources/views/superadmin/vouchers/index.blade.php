@@ -171,8 +171,8 @@
                                 credit_ledger: '<b>Opening Balance</b>', 
                                 type: '', 
                                 voucher_number: '', 
-                                debit: openingBalance < 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
-                                credit: openingBalance >= 0 ? openingBalance.toFixed(2) : '0.00',
+                                debit: openingBalance >= 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
+                                credit: openingBalance < 0 ? openingBalance.toFixed(2) : '0.00',
                                 balance_amount: '',
                             };
 
