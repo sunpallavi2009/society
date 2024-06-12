@@ -46,6 +46,13 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/responsive.css') }}">
 
 
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/components/_card.scss') }}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/slick.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/slick-theme.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/prism.css') }}">
+
+
    <!-- DataTables CSS -->
    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.21/css/jquery.dataTables.min.css">
    <!-- DataTables Buttons CSS -->
@@ -129,11 +136,28 @@
      <script src="{{ asset('assets/js/typeahead-search/handlebars.js') }}"></script>
      <script src="{{ asset('assets/js/typeahead-search/typeahead-custom.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map-vector.js') }}"></script>
+
+
+     <script src="{{ asset('assets/js/slick/slick.min.js') }}"></script>
+     <script src="{{ asset('assets/js/slick/slick.js') }}"></script>
+     <script src="{{ asset('assets/js/header-slick.js') }}"></script>
+     <script src="{{ asset('assets/js/prism/prism.min.js') }}"></script>
+     {{-- <script src="{{ asset('assets/js/script.js') }}../assets/js/clipboard/clipboard.min.js"></script>
+     <script src="{{ asset('assets/js/script.js') }}../assets/js/custom-card/custom-card.js"></script>
+     <script src="{{ asset('assets/js/script.js') }}../assets/js/height-equal.js"></script> --}}
+
      <!-- Plugins JS Ends-->
      <!-- Theme js-->
      <script src="{{ asset('assets/js/script.js') }}"></script>
      <script src="{{ asset('assets/js/theme-customizer/customizer.js') }}"></script>
      <!-- Plugin used-->
+
+
+    <script>
+        document.getElementById('back-button').addEventListener('click', function() {
+            history.back();
+        });
+    </script>
 
      @stack('javascript')
    </body>

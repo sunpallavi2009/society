@@ -5,7 +5,19 @@
     <div class="page-title">
         <div class="row">
             <div class="col-sm-6 p-0">
-                <h3>Webpanel</h3>
+              <a href="javascript:void(0)" id="back-button">
+                  <div class="col-sm-1 card">
+                      <div class="card-header pb-0 p-0" style="background-color: none;">
+                      <div class="card-header-right top-0">
+                          <ul class="list-unstyled card-option">
+                          <li>
+                              <div><i class="icon-settings icon-angle-double-left"></i></div>
+                          </li>
+                          </ul>
+                      </div>
+                      </div>
+                  </div>
+              </a>
             </div>
             <div class="col-sm-6 p-0">
                 <ol class="breadcrumb">
@@ -56,7 +68,7 @@
                       <div class="flex-shrink-0 pt-4"> 
                         {{-- <h4>$73,927</h4> --}}
                         <a href="{{ route('members.index', ['group' => 'Sundry Debtors', 'guid' => $societyGuid]) }}" style="color: #337ab7;">
-                            <h6>Member Ledgers</h6>
+                            <h6 style="color: #000000 !important;">Member Ledgers</h6>
                         </a>
 
                       </div>
@@ -79,7 +91,7 @@
                       <div class="flex-shrink-0 pt-4"> 
                         {{-- <h4>24k USD</h4> --}}
                         <a href="{{ route('members.index', ['group' => '!Sundry Debtors', 'guid' => $societyGuid]) }}" style="color: #337ab7;">
-                            <h6>Other Ledgers</h6>
+                            <h6 style="color: #000000 !important;">Other Ledgers</h6>
                         </a>
                       </div>
                     </div>
@@ -101,7 +113,7 @@
                       <div class="flex-shrink-0 pt-4"> 
                         {{-- <h4>62,828</h4> --}}
                         <a href="{{ route('bills.index', ['date' => date("01-m-Y"), 'guid' => $societyGuid]) }}" style="color: #337ab7;">
-                            <h6>Bills</h6>
+                            <h6 style="color: #000000 !important;">Bills</h6>
                         </a>
                       </div>
                     </div>
@@ -123,7 +135,7 @@
                       <div class="flex-shrink-0 pt-4"> 
                         {{-- <h4>72,982</h4> --}}
                         <a href="{{ route('memberOutstanding.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}" style="color: #337ab7;">
-                            <h6>Outstanding</h6>
+                            <h6 style="color: #000000 !important;">Outstanding</h6>
                         </a>
                       </div>
                     </div>
@@ -145,7 +157,7 @@
                       <div class="flex-shrink-0 p-4"> 
                         {{-- <h4>62,828</h4> --}}
                         {{-- <a href="{{ route('members.index') }}?guid={{ $societyGuid }}" style="color: #337ab7;"> --}}
-                            <h6>Add Voucher</h6>
+                            <h6 style="color: #000000 !important;">Add Voucher</h6>
                         {{-- </a> --}}
                       </div>
                     </div>
@@ -166,7 +178,7 @@
                         </svg></span>
                       <div class="flex-shrink-0 p-4"> 
                         {{-- <h4>72,982</h4> --}}
-                        <h6>Day Book</h6>
+                        <h6 style="color: #000000 !important;">Day Book</h6>
                       </div>
                     </div>
                   </div>

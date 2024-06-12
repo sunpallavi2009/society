@@ -1,11 +1,22 @@
 @extends('layouts.main')
-
 @section('content')
 <div class="container-fluid">
     <div class="page-title">
         <div class="row">
             <div class="col-sm-6 p-0">
-                <h3>vouchers Ledgers</h3>
+                <a href="javascript:void(0)" id="back-button">
+                    <div class="col-sm-1 card">
+                        <div class="card-header pb-0 p-0" style="background-color: none;">
+                        <div class="card-header-right top-0">
+                            <ul class="list-unstyled card-option">
+                            <li>
+                                <div><i class="icon-settings icon-angle-double-left"></i></div>
+                            </li>
+                            </ul>
+                        </div>
+                        </div>
+                    </div>
+                </a>
             </div>
             <div class="col-sm-6 p-0">
                 <ol class="breadcrumb">
@@ -19,6 +30,9 @@
         </div>
     </div>
 </div>
+
+
+
 <div class="container-fluid">
     <div class="row">
 
