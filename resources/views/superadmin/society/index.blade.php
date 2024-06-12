@@ -25,13 +25,16 @@
             <div class="card">
                 <div class="card-body">
                     <div class="list-product-header">
-                        <div> 
-                            <div class="light-box"><a data-bs-toggle="collapse" href="#collapseProduct" role="button" aria-expanded="false" aria-controls="collapseProduct"><i class="filter-icon show" data-feather="filter"></i><i class="icon-close filter-close hide"></i></a></div>
-                        </div>
-                        <div class="collapse" id="collapseProduct">
-                            <div class="card card-body list-product-body">
-                                
+                        <div>
+                            <div class="light-box">
+                                <a data-bs-toggle="collapse" href="#collapseProduct" role="button" aria-expanded="true" aria-controls="collapseProduct">
+                                    <i class="filter-icon show" data-feather="filter"></i>
+                                    <i class="icon-close filter-close hide"></i>
+                                </a>
                             </div>
+                        </div>
+                        <div class="card card-body list-product-body" id="collapseProduct">
+                            <!-- Filter content here -->
                         </div>
                     </div>
                     <div class="">
@@ -44,6 +47,7 @@
                                     <th>Phone</th>
                                     <th>Website</th>
                                     <th>Company Number</th>
+                                    <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -94,6 +98,18 @@
                     {data: 'mobile_number', name: 'mobile_number'},
                     {data: 'website', name: 'website'},
                     {data: 'company_number', name: 'company_number'},
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: false,
+                        searchable: false,
+                        render: function(data, type, row, meta) {
+                            var deleteUrl = "{{ route('society.destroy', ':id') }}";
+                            deleteUrl = deleteUrl.replace(':id', row.id);
+                            return '<button class="btn btn-danger btn-sm delete-society" data-id="' + row.id + '">Delete</button>';
+                        }
+                    }
+
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -135,18 +151,42 @@
                 order: [[0, 'asc']],
                 paging: false, // Remove pagination
             });
-    
-            // Hide DataTable buttons initially
-            $('.dt-buttons').hide();
-    
+
+            // Show DataTable buttons initially
+            $('.dt-buttons').show();
+
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function () {
-                $('.dt-buttons').show();
-            }).on('hidden.bs.collapse', function () {
+                
                 $('.dt-buttons').hide();
+            }).on('hidden.bs.collapse', function () {
+                $('.dt-buttons').show();
             });
         });
     </script>
-    
-    
+    <script>
+        $(document).on('click', '.delete-society', function() {
+        var societyId = $(this).data('id');
+        var deleteUrl = "{{ route('society.destroy', ':id') }}";
+        deleteUrl = deleteUrl.replace(':id', societyId);
+        
+        if (confirm("Are you sure you want to delete this society?")) {
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    // Reload the DataTable after deletion
+                    $('#society-datatable').DataTable().ajax.reload();
+                },
+                error: function(xhr, status, error) {
+                    console.error(xhr.responseText);
+                    // Handle error if any
+                }
+            });
+        }
+    });
+    </script>
 @endpush

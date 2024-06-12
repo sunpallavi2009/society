@@ -10,4 +10,10 @@ class TallyGroup extends Model
     use HasFactory;
 
     protected $guarded = [];
+    
+    public function company()
+{
+    return $this->belongsTo(TallyCompany::class);
+}
+
 }

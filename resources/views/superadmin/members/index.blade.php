@@ -123,43 +123,47 @@
                 },
                 columns: [
                     {
-                                    data: 'name',
-                                    name: 'name',
-                                    render: function(data, type, row, meta) {
-                                        var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
-                                        return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                                    }
-                                },
-                                {data: 'alias1', name: 'alias1'},
-                                {data: 'parent', name: 'parent'},
-                                {data: 'primary_group', name: 'primary_group'},
-                                {
-                                    data: 'this_year_balance',
-                                    name: 'this_year_balance',
-                                    render: function(data, type, row, meta) {
-                                        // Check if the data is a valid number
-                                        if (data === null || data === "" || isNaN(data)) {
-                                            return '0.00';
-                                        }
-
-                                        // Parse and format the balance
-                                        var balance = parseFloat(data);
-                                        balance = Math.abs(balance); // Ensure the balance is positive
-                                        balance = balance.toFixed(2); // Format to 2 decimal places
-                                        balance = balance.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
-                                        
-                                        return balance; // Return formatted balance without currency symbol
-                                    }
-                                },
-
-                                {data: 'vouchers_count', name: 'vouchers_count'},
-                                {
-                                    data: 'first_voucher_date',
-                                    name: 'first_voucher_date',
-                                    render: function(data, type, row, meta) {
-                                        return new Date(data).toISOString();
-                                    }
-                                }
+                        data: 'name',
+                        name: 'name',
+                        render: function(data, type, row, meta) {
+                            var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
+                            return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                        }
+                    },
+                    { data: 'alias1', name: 'alias1' },
+                    { data: 'parent', name: 'parent' },
+                    { data: 'primary_group', name: 'primary_group' },
+                    {
+                        data: 'this_year_balance',
+                        name: 'this_year_balance',
+                        className: 'dt-body-right',
+                        render: function(data, type, row, meta) {
+                            // Check if the data is a valid number
+                            if (data === null || data === "" || isNaN(data)) {
+                                return '0.00';
+                            }
+    
+                            // Parse and format the balance
+                            var balance = parseFloat(data);
+                            balance = Math.abs(balance); // Ensure the balance is positive
+                            balance = balance.toFixed(2); // Format to 2 decimal places
+                            balance = balance.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
+    
+                            return balance; // Return formatted balance without currency symbol
+                        }
+                    },
+                    { data: 'vouchers_count', name: 'vouchers_count', className: 'dt-body-center' },
+                    {
+                        data: 'first_voucher_date',
+                        name: 'first_voucher_date',
+                        render: function(data, type, row, meta) {
+                            var date = new Date(data);
+                            var day = String(date.getDate()).padStart(2, '0');
+                            var month = String(date.getMonth() + 1).padStart(2, '0');
+                            var year = String(date.getFullYear()).slice(-2);
+                            return day + '-' + month + '-' + year;
+                        }
+                    }
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -198,45 +202,45 @@
                         }
                     }
                 ],
-                order: [[0, 'asc']],
+                order: [[0, 'asc']], // Default sorting
                 paging: false, // Remove pagination
-                footerCallback: function (row, data, start, end, display) {
-                        var api = this.api();
-
-                        // Calculate the total balance for the current page
-                        var balanceTotal = api.column(4, { page: 'current' }).data().reduce(function (acc, val) {
-                            // Ensure the value is a valid number, otherwise treat it as 0
-                            var value = parseFloat(val.replace(/,/g, ''));
-                            return acc + (isNaN(value) ? 0 : value);
-                        }, 0);
-                        balanceTotal = Math.abs(balanceTotal); // Ensure the total balance is positive
-
-                        // Calculate the total vouchers count for the current page
-                        var vouchersTotal = api.column(5, { page: 'current' }).data().reduce(function (acc, val) {
-                            // Ensure the value is a valid number, otherwise treat it as 0
-                            var value = parseFloat(val);
-                            return acc + (isNaN(value) ? 0 : value);
-                        }, 0);
-                        vouchersTotal = Math.abs(vouchersTotal); // Ensure the total vouchers count is positive
-
-                        // Format the totals and update the footer
-                        $(api.column(4).footer()).html(balanceTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                        $(api.column(5).footer()).html(vouchersTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    }
-
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api();
+    
+                    // Calculate the total balance for the current page
+                    var balanceTotal = api.column(4, { page: 'current' }).data().reduce(function(acc, val) {
+                        // Ensure the value is a valid number, otherwise treat it as 0
+                        var value = parseFloat(val.replace(/,/g, ''));
+                        return acc + (isNaN(value) ? 0 : value);
+                    }, 0);
+                    balanceTotal = Math.abs(balanceTotal); // Ensure the total balance is positive
+    
+                    // Calculate the total vouchers count for the current page
+                    var vouchersTotal = api.column(5, { page: 'current' }).data().reduce(function(acc, val) {
+                        // Ensure the value is a valid number, otherwise treat it as 0
+                        var value = parseFloat(val);
+                        return acc + (isNaN(value) ? 0 : value);
+                    }, 0);
+                    vouchersTotal = Math.abs(vouchersTotal); // Ensure the total vouchers count is positive
+    
+                    // Format the totals and update the footer
+                    $(api.column(4).footer()).html(balanceTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $(api.column(5).footer()).html(vouchersTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                }
             });
     
-            // Hide DataTable buttons initially
-            $('.dt-buttons').hide();
+            // Show DataTable buttons initially
+            $('.dt-buttons').show();
     
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
-            $('#collapseProduct').on('shown.bs.collapse', function () {
-                $('.dt-buttons').show();
-            }).on('hidden.bs.collapse', function () {
+            $('#collapseProduct').on('shown.bs.collapse', function() {
                 $('.dt-buttons').hide();
+            }).on('hidden.bs.collapse', function() {
+                $('.dt-buttons').show();
             });
         });
     </script>
+    
     
     
 @endpush

@@ -10,4 +10,15 @@ class TallyCompany extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function groups()
+{
+    return $this->hasMany(TallyGroup::class);
+}
+
+public function ledgers()
+{
+    return $this->hasMany(TallyLedger::class);
+}
+
 }

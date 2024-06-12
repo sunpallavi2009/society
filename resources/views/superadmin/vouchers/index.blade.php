@@ -71,7 +71,7 @@
                         <div> 
                             <div class="light-box"><a data-bs-toggle="collapse" href="#collapseProduct" role="button" aria-expanded="false" aria-controls="collapseProduct"><i class="filter-icon show" data-feather="filter"></i><i class="icon-close filter-close hide"></i></a></div>
                         </div>
-                        <div class="collapse" id="collapseProduct">
+                        <div class="collapse show" id="collapseProduct">
                             <div class="card card-body list-product-body">
                                 <div class="row mb-4">
                                     <div class="col-md-3">
@@ -158,6 +158,7 @@
             var table = $('#voucher-datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                ordering: false,
                 ajax: {
                     url: "{{ route('vouchers.get-data') }}",
                     type: 'GET',
@@ -182,13 +183,13 @@
 
                         // Prepend opening balance row to the data
                         var openingBalanceRow = {
-                            voucher_date: '', 
+                            voucher_date: '', // Set to empty string
                             credit_ledger: '<b>Opening Balance</b>', 
                             type: '', 
                             voucher_number: '', 
                             debit: openingBalance < 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
                             credit: openingBalance >= 0 ? openingBalance.toFixed(2) : '0.00',
-                            balance_amount: '',
+                            balance_amount: '', // Set to empty string
                         };
 
                         if (openingBalance === 0) {
@@ -201,11 +202,21 @@
                     }
                 },
                 columns: [
-                    {data: 'voucher_date', name: 'voucher_date'},
+                    {
+                        data: 'voucher_date',
+                        name: 'voucher_date',
+                        render: function(data, type, row) {
+                            if (data) {
+                                return moment(data).format('DD-MM-YY');
+                            }
+                            return ''; 
+                        }
+                    },
                     {data: 'credit_ledger', name: 'credit_ledger'},
                     {
                         data: 'type', 
                         name: 'type',
+                        className: 'dt-body-center',
                         render: function(data, type, row, meta) {
                             if (data === 'Bill' || data === 'Rcpt') {
                                 var companyGuid = '{{ $society->guid }}';
@@ -224,25 +235,34 @@
                             }
                         }
                     },
-                    {data: 'voucher_number', name: 'voucher_number'},
-                    {data: 'debit', name: 'debit'},
-                    {data: 'credit', name: 'credit'},
+                    {data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center',},
+                    {data: 'debit', name: 'debit', className: 'dt-body-right',},
+                    {data: 'credit', name: 'credit', className: 'dt-body-right',},
                     {
                         data: 'balance_amount',
                         name: 'balance_amount',
+                        className: 'dt-body-right',
                         render: function(data, type, row, meta) {
-                            if (isNaN(data) || data === null) {
-                                return "0.00";
+                            if (isNaN(data) || data === null || data === "NaN") {
+                                return ""; // Return empty string if data is NaN, null, or "NaN"
+                            } else {
+                                var balance_amount = parseFloat(data);
+                                if (isNaN(balance_amount)) {
+                                    return ""; // Return empty string if parsed balance_amount is NaN
+                                } else {
+                                    if (balance_amount === 0) {
+                                        return "0.00";
+                                    }
+                                    balance_amount = balance_amount * -1; // Change sign
+                                    balance_amount = balance_amount.toFixed(2); // Format to 2 decimal places
+                                    balance_amount = balance_amount.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
+                                    return balance_amount; // Return formatted balance without currency symbol
+                                }
                             }
-                            var balance_amount = parseFloat(data);
-                            if (balance_amount === 0) {
-                                return "0.00";
-                            }
-                            balance_amount = balance_amount.toFixed(2); // Format to 2 decimal places
-                            balance_amount = balance_amount.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
-                            return balance_amount; // Return formatted balance without currency symbol
                         }
                     }
+
+
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -345,7 +365,7 @@
             calculateAdditionalSum();
 
             // Hide DataTable buttons initially
-            $('.dt-buttons').hide();
+            $('.dt-buttons').show();
 
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function () {

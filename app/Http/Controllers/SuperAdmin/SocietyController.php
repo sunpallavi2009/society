@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 
+use App\Models\TallyGroup;
 use App\Models\TallyLedger;
 use App\Models\TallyCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -41,22 +43,36 @@ class SocietyController extends Controller
         }
     }
 
+    public function destroy($id)
+    {
+        try {
+            DB::beginTransaction();
+            
+            // Find the society
+            $society = TallyCompany::findOrFail($id);
+            
+            // Extract the base GUID
+            $baseGuid = substr($society->guid, 0, 36);
+            
+            // Delete related data from TallyGroup and TallyLedger tables
+            TallyGroup::where('guid', 'like', $baseGuid . '-%')->delete();
+            TallyLedger::where('guid', 'like', $baseGuid . '-%')->delete();
+            
+            // Delete the society
+            $society->delete();
 
-    // public function getData(Request $request)
-    // {
-    //     // $societies = TallyCompany::latest()->get();
-    //     // dd($societies);
-    //     if ($request->ajax()) {
-    //         $societies = TallyCompany::latest()->get();
-    //         if($societies->isEmpty()) {
-    //             return response()->json(['error' => 'No data found'], 404);
-    //         }
-    //         // dd($societies);
-    //         return DataTables::of($societies)
-    //             ->addIndexColumn()
-    //             ->make(true);
-    //     }
-    // }
+            // dd($society);
+            
+            DB::commit();
+            
+            return response()->json(['success' => 'Society deleted successfully.']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            // Handle the exception
+            return response()->json(['error' => 'Failed to delete society.']);
+        }
+    }
+    
 
     public function societyDashboard(Request $request)
     {

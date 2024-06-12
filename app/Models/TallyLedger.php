@@ -12,6 +12,12 @@ class TallyLedger extends Model
 
     protected $guarded = [];
 
+    public function company()
+{
+    return $this->belongsTo(TallyCompany::class);
+}
+
+
     public function vouchers()
     {
         return $this->hasMany(Voucher::class, 'ledger_guid', 'guid');

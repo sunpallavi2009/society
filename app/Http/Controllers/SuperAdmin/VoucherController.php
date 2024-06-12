@@ -46,7 +46,7 @@ class VoucherController extends Controller
             
             $vouchers = $query->latest()->get();
 
-            // dd($vouchers);
+            //dd($vouchers);
 
             
             return DataTables::of($vouchers)

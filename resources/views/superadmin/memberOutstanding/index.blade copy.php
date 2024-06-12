@@ -57,7 +57,7 @@
                         <div> 
                             <div class="light-box"><a data-bs-toggle="collapse" href="#collapseProduct" role="button" aria-expanded="false" aria-controls="collapseProduct"><i class="filter-icon show" data-feather="filter"></i><i class="icon-close filter-close hide"></i></a></div>
                         </div>
-                        <div class="collapse show" id="collapseProduct">
+                        <div class="collapse" id="collapseProduct">
                             <div class="card card-body list-product-body">
                                 <div class="row mb-4">
                                     <div class="col-md-3">
@@ -68,6 +68,10 @@
                                         <label for="to_date">To Date:</label>
                                         <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-d') }}">
                                     </div>
+                                    {{-- <div class="col-md-4 align-self-end">
+                                        <button id="search" class="btn btn-primary">Search</button>
+                                        <button id="clear-filters" class="btn btn-secondary">Clear Filters</button>
+                                    </div> --}}
                                 </div>
                             </div>
                         </div>
@@ -132,6 +136,10 @@
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
                         d.group = "{{ $group }}";
+                        var fromDate = $('#from_date').val();
+                        var toDate = $('#to_date').val();
+                        d.from_date = fromDate;
+                        d.to_date = toDate;
                     }
                 },
                 columns: [
@@ -145,21 +153,14 @@
                                 },
                                 { data: 'alias1', name: 'alias1' },
                                 { data: 'voucher_number', name: 'voucher_number' },
-                                { data: 'voucher_number', name: 'voucher_number' },
-                                // {
-                                //     data: null,
-                                //     name: 'from_date',
-                                //     render: function(data, type, row, meta) {
-                                //         // Get the value of the date from the DataTable
-                                //         var fromDate = row.from_date;
-
-                                //         // Format the date using moment.js
-                                //         var formattedDate = moment(fromDate).format('DD-MM-YY');
-
-                                //         // Return the formatted date
-                                //         return formattedDate;
-                                //     }
-                                // },
+                                {
+                                    data: null,
+                                    name: 'from_date',
+                                    render: function(data, type, row, meta) {
+                                        var fromDate = $('#from_date').val();
+                                        return fromDate;
+                                    }
+                                },
                                 { data: 'amount', name: 'amount' },
                                 {
                                     data: 'this_year_balance',
@@ -285,6 +286,8 @@
                 dataTable.search('').draw();
             });
 
+            // Search button
+            // Search button
             $('#search').click(function() {
                 var fromDate = $('#from_date').val();
                 var toDate = $('#to_date').val();
@@ -300,7 +303,7 @@
 
     
             // Hide DataTable buttons initially
-            $('.dt-buttons').show();
+            $('.dt-buttons').hide();
     
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function () {
