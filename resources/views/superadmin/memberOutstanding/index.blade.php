@@ -62,11 +62,11 @@
                                 <div class="row mb-4">
                                     <div class="col-md-3">
                                         <label for="from_date">From Date:</label>
-                                        <input class="form-control" type="date" id="from_date" value="{{ date('Y-m-d') }}">
+                                        <input class="form-control" type="date" id="from_date" value="{{ date('Y-m-01') }}">
                                     </div>
                                     <div class="col-md-3">
                                         <label for="to_date">To Date:</label>
-                                        <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-d') }}">
+                                        <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-01') }}">
                                     </div>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                                     <th colspan="3"></th>
                                     <th></th>
                                     <th></th>
-                                    <th>0.00</th>
+                                    <th></th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -126,12 +126,15 @@
             var table = $('#memberOutstanding-datatable').DataTable({
                 processing: true,
                 serverSide: true,
+                // ordering: false,
                 ajax: {
                     url: "{{ route('memberOutstanding.get-data') }}",
                     type: 'GET',
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
                         d.group = "{{ $group }}";
+                        d.from_date = $('#from_date').val() || "{{ date('Y-m-d') }}"; // Default to current date
+                        d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}"; 
                     }
                 },
                 columns: [
@@ -144,55 +147,20 @@
                                     }
                                 },
                                 { data: 'alias1', name: 'alias1' },
-                                { data: 'voucher_number', name: 'voucher_number' },
-                                { data: 'voucher_number', name: 'voucher_number' },
-                                // {
-                                //     data: null,
-                                //     name: 'from_date',
-                                //     render: function(data, type, row, meta) {
-                                //         // Get the value of the date from the DataTable
-                                //         var fromDate = row.from_date;
-
-                                //         // Format the date using moment.js
-                                //         var formattedDate = moment(fromDate).format('DD-MM-YY');
-
-                                //         // Return the formatted date
-                                //         return formattedDate;
-                                //     }
-                                // },
-                                { data: 'amount', name: 'amount' },
+                                { data: 'voucher_details', name: 'voucher_details' , className: 'dt-body-center'},
+                                { data: 'voucher_date', name: 'voucher_date' },
+                                { data: 'opening_balance', name: 'opening_balance' , className: 'dt-body-right'},
+                                { data: 'amount', name: 'amount' , className: 'dt-body-right'},
+                                { data: 'instrument_amount', name: 'instrument_amount' , className: 'dt-body-right'},
                                 {
                                     data: 'this_year_balance',
                                     name: 'this_year_balance',
+                                    className: 'dt-body-right',
                                     render: function(data, type, row, meta) {
-                                        return Math.abs(data).toFixed(2); // Remove the sign and format to 2 decimal places
+                                        // Invert the sign
+                                        return (-parseFloat(data)).toFixed(2);
                                     }
                                 },
-                                {
-                                    data: null,
-                                    name: 'received',
-                                    render: function(data, type, row, meta) {
-                                        return '0.00'; // Always display Received as 0.00
-                                    }
-                                },
-                                {
-                                    data: null,
-                                    name: 'due_amt',
-                                    render: function(data, type, row, meta) {
-                                        var openingBal = parseFloat(Math.abs(row.this_year_balance));
-                                        var billAmount = parseFloat(row.amount);
-                                        if (!isNaN(openingBal) && !isNaN(billAmount)) {
-                                            var due_amt = openingBal + billAmount;
-                                            if (!isNaN(due_amt)) {
-                                                return due_amt.toFixed(2);
-                                            } else {
-                                                return "N/A"; // Return "Not Available" if outstanding is not a number
-                                            }
-                                        } else {
-                                            return "N/A";
-                                        }
-                                    }
-                                }
                             ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -223,80 +191,104 @@
                             }
                         }
                     },
-                    'colvis',
-                                {
-                                    extend: 'searchBuilder',
-                                    config: {
-                                        columns: [0, 1, 2, 3, 4, 5, 6, 7]
-                                    },
-                                    i18n: {
-                                        conditions: {
-                                            date: {
-                                                '=': 'Equals',
-                                                '!=': 'Not equal',
-                                                'before': 'Before',
-                                                'after': 'After'
-                                            }
-                                        },
-                                        date: {
-                                            format: 'YYYY-MM-DD'
-                                        }
-                                    }
-                                }
+                    // 'colvis',
+                    //             {
+                    //                 extend: 'searchBuilder',
+                    //                 config: {
+                    //                     columns: [0, 1, 2, 3, 4, 5, 6, 7]
+                    //                 },
+                    //                 i18n: {
+                    //                     conditions: {
+                    //                         date: {
+                    //                             '=': 'Equals',
+                    //                             '!=': 'Not equal',
+                    //                             'before': 'Before',
+                    //                             'after': 'After'
+                    //                         }
+                    //                     },
+                    //                     date: {
+                    //                         format: 'YYYY-MM-DD'
+                    //                     }
+                    //                 }
+                    //             }
                 ],
                 order: [[0, 'asc']],
                 paging: false, // Remove pagination
 
 
-                footerCallback: function (row, data, start, end, display) {
-                    var api = this.api();
 
-                    // Calculate the total balance for the current page
-                    var OpeningBalTotal = api.column(4, { page: 'current' }).data().reduce(function (acc, val) {
-                        return acc + parseFloat(val.replace(/,/g, '') || 0);
-                    }, 0);
-                    OpeningBalTotal = Math.abs(OpeningBalTotal); // Ensure the total balance is positive
+                ordering: true,
 
-                    // Calculate the total billed amount for the current page
-                    var BilledAmountTotal = api.column(5, { page: 'current' }).data().reduce(function (acc, val) {
-                        return acc + parseFloat(val.replace(/,/g, '') || 0);
-                    }, 0);
-                    BilledAmountTotal = Math.abs(BilledAmountTotal); // Ensure the total billed amount is positive
+                // Column definition for sorting
+                columnDefs: [
+                    {
+                        targets: [0, 1, 2, 3, 4, 5, 6, 7], // Apply sorting to these columns (index starts from 0)
+                        orderable: true // Allow ordering (click to sort) for these columns
+                    }
+                ],
 
-                    // Calculate the total due amount for the current page
-                    var DueAmtTotal = OpeningBalTotal + BilledAmountTotal;
 
-                    // Format the totals and update the footer
-                    $(api.column(4).footer()).html(OpeningBalTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    $(api.column(5).footer()).html(BilledAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    $(api.column(7).footer()).html(DueAmtTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                }
-               
-
-            });
-
-            $('#from_date, #to_date').on('change', function() {
-                table.ajax.reload();
-            });
-
-            // Clear filters button
-            $('#clear-filters').click(function() {
-                $("#name").val('').trigger('change');
-                dataTable.search('').draw();
-            });
-
-            $('#search').click(function() {
-                var fromDate = $('#from_date').val();
-                var toDate = $('#to_date').val();
-                var url = "{{ route('memberOutstanding.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
                 
-                // Set the values of the DataTables search inputs
-                table.columns(3).search(fromDate).draw(); // 3 is the index of the 'From Date' column
-                table.columns(4).search(toDate).draw(); // 4 is the index of the 'To Date' column
-                
-                // Redirect to the URL
-                window.location.href = url;
+
+                footerCallback: function(row, data, start, end, display) {
+                        var api = this.api();
+
+                        // Calculate the total opening balance for the current page
+                        var OpeningBalTotal = api.column(4, { page: 'current' }).data().reduce(function(acc, val) {
+                            // Parse float directly if val is numeric or convert if necessary
+                            var parsedVal = parseFloat(val.replace(/,/g, '') || 0);
+                            return acc + parsedVal;
+                        }, 0);
+                        OpeningBalTotal = Math.abs(OpeningBalTotal); // Ensure the total balance is positive
+
+                        // Calculate the total billed amount for the current page
+                        var BilledAmountTotal = api.column(5, { page: 'current' }).data().reduce(function(acc, val) {
+                            var parsedVal = parseFloat(val.replace(/,/g, '') || 0);
+                            return acc + parsedVal;
+                        }, 0);
+                        BilledAmountTotal = Math.abs(BilledAmountTotal); // Ensure the total billed amount is positive
+
+                        // var InstrumentAmountTotal = api.column(6, { page: 'current' }).data().reduce(function(acc, val) {
+                        //     console.log('Value in instrument amount column:', val);
+                        //     var parsedVal = parseFloat(val.replace(/,/g, '') || 0); // Parse float and remove commas
+                        //     return acc + parsedVal;
+                        // }, 0);
+
+                        // Calculate the total due amount for the current page
+                        var DueAmtTotal = OpeningBalTotal + BilledAmountTotal;
+
+                        // Format the totals and update the footer
+                        $(api.column(4).footer()).html(OpeningBalTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                        $(api.column(5).footer()).html(BilledAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                        // $(api.column(6).footer()).html(InstrumentAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                        $(api.column(7).footer()).html(DueAmtTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    },
+
+
+
             });
+
+                $('#from_date, #to_date').on('change', function () {
+                    var fromDate = $('#from_date').val();
+                    var toDate = $('#to_date').val();
+                    table.ajax.reload(); // Reload DataTable on date change
+                });
+
+                // Clear filters button functionality
+                $('#clear-filters').click(function () {
+                    $('#from_date, #to_date').val('');
+                    table.ajax.reload(); // Reload DataTable to clear filters
+                });
+
+                // Search button functionality (redirects to URL)
+               // Search button functionality (redirects to URL)
+                $('#search').click(function () {
+                    var fromDate = $('#from_date').val();
+                    var toDate = $('#to_date').val();
+                    var url = "{{ route('memberOutstanding.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
+                    window.location.href = url; // Redirect to filtered URL
+                });
+
 
     
             // Hide DataTable buttons initially
