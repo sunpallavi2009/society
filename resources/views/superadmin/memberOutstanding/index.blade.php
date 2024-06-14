@@ -231,38 +231,29 @@
                 
 
                 footerCallback: function(row, data, start, end, display) {
-                        var api = this.api();
+                    var api = this.api();
 
-                        // Calculate the total opening balance for the current page
-                        var OpeningBalTotal = api.column(4, { page: 'current' }).data().reduce(function(acc, val) {
-                            // Parse float directly if val is numeric or convert if necessary
-                            var parsedVal = parseFloat(val.replace(/,/g, '') || 0);
+                    // Helper function to sum and parse float values
+                    var sumColumnData = function(columnIndex) {
+                        return api.column(columnIndex, { page: 'current' }).data().reduce(function(acc, val) {
+                            var parsedVal = parseFloat(val.toString().replace(/,/g, '') || 0);
                             return acc + parsedVal;
                         }, 0);
-                        OpeningBalTotal = Math.abs(OpeningBalTotal); // Ensure the total balance is positive
+                    };
 
-                        // Calculate the total billed amount for the current page
-                        var BilledAmountTotal = api.column(5, { page: 'current' }).data().reduce(function(acc, val) {
-                            var parsedVal = parseFloat(val.replace(/,/g, '') || 0);
-                            return acc + parsedVal;
-                        }, 0);
-                        BilledAmountTotal = Math.abs(BilledAmountTotal); // Ensure the total billed amount is positive
+                    // Calculate totals
+                    var OpeningBalTotal = sumColumnData(4);
+                    var BilledAmountTotal = sumColumnData(5);
+                    var InstrumentAmountTotal = sumColumnData(6);
 
-                        // var InstrumentAmountTotal = api.column(6, { page: 'current' }).data().reduce(function(acc, val) {
-                        //     console.log('Value in instrument amount column:', val);
-                        //     var parsedVal = parseFloat(val.replace(/,/g, '') || 0); // Parse float and remove commas
-                        //     return acc + parsedVal;
-                        // }, 0);
+                    var DueAmtTotal = OpeningBalTotal + BilledAmountTotal - InstrumentAmountTotal;
 
-                        // Calculate the total due amount for the current page
-                        var DueAmtTotal = OpeningBalTotal + BilledAmountTotal;
-
-                        // Format the totals and update the footer
-                        $(api.column(4).footer()).html(OpeningBalTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                        $(api.column(5).footer()).html(BilledAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                        // $(api.column(6).footer()).html(InstrumentAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                        $(api.column(7).footer()).html(DueAmtTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
-                    },
+                    // Format the totals and update the footer
+                    $(api.column(4).footer()).html(OpeningBalTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $(api.column(5).footer()).html(BilledAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $(api.column(6).footer()).html(InstrumentAmountTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                    $(api.column(7).footer()).html(DueAmtTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+                },
 
 
 
