@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SuperAdmin\BillController;
 use App\Http\Controllers\SuperAdmin\MemberController;
+use App\Http\Controllers\SuperAdmin\DayBookController;
+use App\Http\Controllers\SuperAdmin\ReceiptController;
 use App\Http\Controllers\SuperAdmin\SocietyController;
 use App\Http\Controllers\SuperAdmin\VoucherController;
 use App\Http\Controllers\SuperAdmin\VoucherEntryController;
@@ -56,6 +58,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/memberOutstanding', [MemberOutstandingController::class, 'index'])->name('memberOutstanding.index');
     Route::get('/memberOutstanding/get-data', [MemberOutstandingController::class, 'getData'])->name('memberOutstanding.get-data');
 
+    Route::get('/dayBook', [DayBookController::class, 'index'])->name('dayBook.index');
+    Route::get('/dayBook/get-data', [DayBookController::class, 'getData'])->name('dayBook.get-data');
+
+
+    Route::get('/receipts', [ReceiptController::class, 'index'])->name('receipts.index');
+    Route::get('/receipts/get-data', [ReceiptController::class, 'getData'])->name('receipts.get-data');
 
 });
 

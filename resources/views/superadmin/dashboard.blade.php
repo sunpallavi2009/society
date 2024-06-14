@@ -178,7 +178,9 @@
                         </svg></span>
                       <div class="flex-shrink-0 p-4"> 
                         {{-- <h4>72,982</h4> --}}
-                        <h6 style="color: #000000 !important;">Day Book</h6>
+                        <a href="{{ route('dayBook.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}" style="color: #337ab7;">
+                          <h6 style="color: #000000 !important;">Day Book</h6>
+                        </a>
                       </div>
                     </div>
                   </div>

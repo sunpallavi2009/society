@@ -4,7 +4,7 @@
     transform: rotate(45deg);
 }
     </style>
-  
+
       <!-- Page Body Start-->
       <div class="page-body-wrapper">
         <!-- Page Sidebar Start-->
@@ -55,6 +55,17 @@
                       <use href="{{ asset('assets/svg/icon-sprite.svg#fill-animation') }}"></use>
                     </svg><span>Society</span></a>
                   </li>
+
+
+                  {{-- <li class="sidebar-list">
+                    <a class="sidebar-link sidebar-title link-nav" href="{{ route('receipts.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}">
+                      <svg class="stroke-icon">
+                        <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-animation') }}"></use>
+                      </svg>
+                    <svg class="fill-icon">
+                      <use href="{{ asset('assets/svg/icon-sprite.svg#fill-animation') }}"></use>
+                    </svg><span>Receipts</span></a>
+                  </li> --}}
                   
                   <li class="sidebar-list"> <a class="sidebar-link sidebar-title" href="#">
                       <svg class="stroke-icon">

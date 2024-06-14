@@ -25,7 +25,7 @@
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg></a></li>
-                    <li class="breadcrumb-item active">Member Outstanding</li>
+                    <li class="breadcrumb-item active">Day Book</li>
                 </ol>
             </div>
         </div>
@@ -43,7 +43,7 @@
                                 <h3><b>{{ $company->name }}</b></h3>
                                 <h6>{{ $company->address1 }}</h6>
                             @endforeach
-                            <p> Member Outstanding </p>
+                            <p> Day Book </p>
                         </h6>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         </div>
                     </div>
                     <div class="">
-                        <table id="memberOutstanding-datatable" class="display" style="width:100%">
+                        <table id="dayBook-datatable" class="display" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Name</th>
@@ -123,12 +123,12 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            var table = $('#memberOutstanding-datatable').DataTable({
+            var table = $('#dayBook-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 // ordering: false,
                 ajax: {
-                    url: "{{ route('memberOutstanding.get-data') }}",
+                    url: "{{ route('dayBook.get-data') }}",
                     type: 'GET',
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
@@ -279,7 +279,7 @@
                 $('#search').click(function () {
                     var fromDate = $('#from_date').val();
                     var toDate = $('#to_date').val();
-                    var url = "{{ route('memberOutstanding.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
+                    var url = "{{ route('dayBook.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
                     window.location.href = url; // Redirect to filtered URL
                 });
 
