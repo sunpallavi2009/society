@@ -24,9 +24,9 @@
                     <li class="breadcrumb-item"><a href="{{ route('dashboard') }}">
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
-                        </svg></a></li>
+                        </svg></a>
+                      </li>
                     <li class="breadcrumb-item active">Webpanel</li>
-                   
                 </ol>
             </div>
         </div>
@@ -41,12 +41,24 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="text-center text-white">
-                        <h6 class="text-black">
-                            <h3><b>{{ $society->name }}</b></h3>
-                            <h6>{{ $society->address1 }}</h6>
-                        </h6>
+                  <div class="row">
+                    <div class="col-sm-10">
+                      <div class="text-center text-white">
+                          <h6 class="text-black">
+                              <h3><b>{{ $society->name }}</b></h3>
+                              <h6>{{ $society->address1 }}</h6>
+                          </h6>
+                      </div>
                     </div>
+                    <div class="col-sm-2">
+                      <div class="btn-group">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"> Reports</button>
+                        <ul class="dropdown-menu dropdown-block" data-popper-placement="bottom-start" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 37px);">
+                          <li><a class="dropdown-item" href="{{ route('receipts.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}">Receipts</a></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
             </div>
         </div>

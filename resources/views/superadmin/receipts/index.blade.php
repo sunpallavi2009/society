@@ -37,7 +37,7 @@
         <div class="col-sm-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="text-center text-white">
+                    <div class="text-center text-black">
                         <h6 class="text-black">
                             @foreach ($society as $company)
                                 <h3><b>{{ $company->name }}</b></h3>
@@ -78,18 +78,26 @@
                         <table id="ledger-datatable" class="display" style="width:100%">
                             <thead>
                                 <tr>
+                                    {{-- <th>Id</th> --}}
+                                    <th>Date</th>
+                                    <th>Account</th>
                                     <th>Name</th>
                                     <th>Alias</th>
-                                    <th>Parent</th>
-                                    <th>Primary Group</th>
-                                    <th>Balance</th>
-                                    <th>Total Voucher</th>
-                                    <th>Voucher Date</th>
+                                    <th>Vch No.</th>
+                                    <th>Inst. No.</th>
+                                    <th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <!-- Data will be populated by DataTables -->
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Total</th>
+                                    <th colspan="5"></th>
+                                    <th style="text-align:right"></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -118,7 +126,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: "{{ route('members.get-data') }}",
+                    url: "{{ route('receipts.get-data') }}",
                     type: 'GET',
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
@@ -128,48 +136,40 @@
                     }
                 },
                 columns: [
-                    {
-                        data: 'name',
-                        name: 'name',
+                    // { data: 'ledger_guid', name: 'ledger_guid' },
+                    { data: 'instrument_date', name: 'instrument_date',
+                        render: function(data, type, row) {
+                            if (data) {
+                                return moment(data).format('DD-MM-YY');
+                            }
+                            return ''; 
+                        }
+                    },
+                    { 
+                        data: 'combined_field', // Use the combined_field property for sorting
+                        render: function(data, type, row) {
+                            var content = row.credit_ledger + '<br>' + row.narration;
+                            if (row.NAR) {
+                                content += '<br>' + row.NAR;
+                            }
+                            return content;
+                        },
+                        name: 'combined_field' // Use the same name for sorting
+                    },
+                    { data: 'ledger_name', name: 'ledger_name',
                         render: function(data, type, row, meta) {
                             var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
                             return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                        }
+                        } 
                     },
                     { data: 'alias1', name: 'alias1' },
-                    { data: 'parent', name: 'parent' },
-                    { data: 'primary_group', name: 'primary_group' },
-                    {
-                        data: 'this_year_balance',
-                        name: 'this_year_balance',
-                        className: 'dt-body-right',
-                        render: function(data, type, row, meta) {
-                            // Check if the data is a valid number
-                            if (data === null || data === "" || isNaN(data)) {
-                                return '0.00';
-                            }
-    
-                            // Parse and format the balance
-                            var balance = parseFloat(data);
-                            balance = Math.abs(balance); // Ensure the balance is positive
-                            balance = balance.toFixed(2); // Format to 2 decimal places
-                            balance = balance.replace(/\B(?=(\d{3})+(?!\d))/g, ","); // Add commas for thousands
-    
-                            return balance; // Return formatted balance without currency symbol
-                        }
-                    },
-                    { data: 'vouchers_count', name: 'vouchers_count', className: 'dt-body-center' },
-                    {
-                        data: 'voucher_date',
-                        name: 'voucher_date',
-                        render: function(data, type, row, meta) {
-                            var date = new Date(data);
-                            var day = String(date.getDate()).padStart(2, '0');
-                            var month = String(date.getMonth() + 1).padStart(2, '0');
-                            var year = String(date.getFullYear()).slice(-2);
-                            return day + '-' + month + '-' + year;
-                        }
-                    }
+                    { data: 'voucher_number', name: 'voucher_number' },
+                    { data: 'instrument_number', name: 'instrument_number' },
+                    { data: 'instrument_amount', name: 'instrument_amount', className: 'dt-body-center', render: function(data) {
+                        // Remove minus sign if present
+                        var amount = parseFloat(data.replace('-', ''));
+                        return amount.toLocaleString('en-US', { minimumFractionDigits: 2 }); // Format as currency or numeric
+                    }},
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -200,16 +200,42 @@
                             }
                         }
                     },
-                    'colvis',
-                    {
-                        extend: 'searchBuilder',
-                        config: {
-                            columns: [0, 1, 2, 3, 4, 5], // Specify the searchable columns
-                        }
-                    }
+                    // 'colvis',
+                    // 'searchBuilder',
+                    // {
+                    //     text: 'Reset Column Order',
+                    //     action: function () {
+                    //         this.colReorder.reset();
+                    //     }
+                    // }
                 ],
                 order: [[0, 'asc']], // Default sorting
                 paging: false, // Remove pagination
+
+                footerCallback: function(row, data, start, end, display) {
+                    var api = this.api(), data;
+        
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function(i) {
+                        return typeof i === 'string' ?
+                            parseFloat(i.replace(/[\$,()-]/g, '')) :
+                            typeof i === 'number' ?
+                                i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(6)
+                        .data()
+                        .reduce(function(a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(6).footer()).html(
+                        total.toLocaleString('en-US', { minimumFractionDigits: 2 })
+                    );
+                }
                
             });
 
@@ -242,9 +268,9 @@
     
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function() {
-                $('.dt-buttons').hide();
-            }).on('hidden.bs.collapse', function() {
                 $('.dt-buttons').show();
+            }).on('hidden.bs.collapse', function() {
+                $('.dt-buttons').hide();
             });
         });
     </script>
