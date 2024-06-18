@@ -93,9 +93,9 @@
                                 <tr>
                                     <th>Total</th>
                                     <th colspan="3"></th>
-                                    <th></th>
-                                    <th></th>
-                                    <th></th>
+                                    <th style="text-align: right;"></th>
+                                    <th style="text-align: right;"></th>
+                                    <th style="text-align: right;"></th>
                                     <th></th>
                                 </tr>
                             </tfoot>
