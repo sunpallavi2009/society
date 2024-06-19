@@ -13,10 +13,9 @@ class TallyLedger extends Model
     protected $guarded = [];
 
     public function company()
-{
-    return $this->belongsTo(TallyCompany::class);
-}
-
+    {
+        return $this->belongsTo(TallyCompany::class);
+    }
 
     public function vouchers()
     {
@@ -26,5 +25,10 @@ class TallyLedger extends Model
     public function firstVoucherDate()
     {
         return $this->vouchers()->orderBy('voucher_date', 'asc')->first()->voucher_date ?? null;
+    }
+
+    public function voucher_entries()
+    {
+        return $this->hasMany(VoucherEntry::class, 'voucher_id', 'id');
     }
 }

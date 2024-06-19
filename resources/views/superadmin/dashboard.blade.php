@@ -55,6 +55,7 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="true"> Reports</button>
                         <ul class="dropdown-menu dropdown-block" data-popper-placement="bottom-start" style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate(0px, 37px);">
                           <li><a class="dropdown-item" href="{{ route('receipts.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}">Receipts</a></li>
+                          <li><a class="dropdown-item" href="{{ route('checkReceipts.index', ['from_date' => date("01-m-Y"),'to_date' => date("01-m-Y"), 'guid' => $societyGuid]) }}">Check Receipt Report</a></li>
                         </ul>
                       </div>
                     </div>

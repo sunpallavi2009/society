@@ -25,7 +25,7 @@
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg></a></li>
-                    <li class="breadcrumb-item active">Day Book</li>
+                    <li class="breadcrumb-item active">Receipts list</li>
                 </ol>
             </div>
         </div>
@@ -43,7 +43,7 @@
                                 <h3><b>{{ $company->name }}</b></h3>
                                 <h6>{{ $company->address1 }}</h6>
                             @endforeach
-                            <p> Day Book </p>
+                            <p>Day Book</p>
                         </h6>
                     </div>
                 </div>
@@ -59,30 +59,35 @@
                         </div>
                         <div class="collapse show" id="collapseProduct">
                             <div class="card card-body list-product-body">
-                                <div class="row mb-4">
-                                    <div class="col-md-3">
-                                        <label for="from_date">From Date:</label>
-                                        <input class="form-control" type="date" id="from_date" value="{{ date('Y-m-01') }}">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="to_date">To Date:</label>
-                                        <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-01') }}">
+                                <div class="card card-body list-product-body">
+                                    <div class="row mb-4">
+                                        <div class="col-md-3">
+                                            <label for="from_date">From Date:</label>
+                                            <input class="form-control" type="date" id="from_date" value="{{ date('Y-m-01') }}">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="to_date">To Date:</label>
+                                            <input class="form-control" type="date" id="to_date" value="{{ date('Y-m-01') }}">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div class="">
-                        <table id="dayBook-datatable" class="display" style="width:100%">
+                        <table id="ledger-datatable" class="display" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>From Date</th>
+                                    {{-- <th>Id</th> --}}
+                                    <th>Date</th>
+                                    <th>Account</th>
                                     <th>Name</th>
-                                    <th>Alias</th>
                                     <th>Type</th>
-                                    <th>Total Vch</th>
-                                    <th>credit</th>
-                                    <th>debit</th>
+                                    <th>Alias</th>
+                                    <th>Vch No.</th>
+                                    <th>Debit Total</th>
+                                    <th>Credit Total</th>
+                                    <th>Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,40 +117,51 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            var table = $('#dayBook-datatable').DataTable({
+            var table = $('#ledger-datatable').DataTable({
                 processing: true,
                 serverSide: true,
-                // ordering: false,
                 ajax: {
                     url: "{{ route('dayBook.get-data') }}",
                     type: 'GET',
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
-                        d.group = "{{ $group }}";
+                        d.group = "{{ $group }}"; // Pass the group parameter
                         d.from_date = $('#from_date').val() || "{{ date('Y-m-d') }}"; // Default to current date
-                        d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}"; 
+                        d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}";
+                    },
+                     error: function(xhr, error, thrown) {
+                        if (xhr.status == 404) {
+                            $('#ledger-datatable').DataTable().clear().draw();
+                            $('#ledger-datatable').DataTable().destroy();
+                            $('#ledger-datatable tbody').html('<tr><td colspan="7" class="text-center">Data not found</td></tr>');
+                        }
                     }
                 },
                 columns: [
-                                { data: 'voucher_date', name: 'voucher_date', render: function(data, type, row) {
-                                    return data ? moment(data).format('DD-MM-YY') : '';
-                                } },
-                                {
-                                    data: 'name',
-                                    name: 'name',
-                                    render: function(data, type, row, meta) {
-                                        var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
-                                        return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                                    }
-                                },
-                                { data: 'alias1', name: 'alias1' },
-                                { data: 'type', name: 'type' },
-                                { data: 'voucher_number', name: 'voucher_number' , className: 'dt-body-center'},
-                                
-                                { data: 'debit_total', name: 'debit_total' },
-                                
-                                { data: 'credit_total', name: 'credit_total' },
-                            ],
+                    // { data: 'ledger_guid', name: 'ledger_guid' },
+                    { data: 'instrument_date', name: 'instrument_date',
+                        render: function(data, type, row) {
+                            if (data) {
+                                return moment(data).format('DD-MM-YY');
+                            }
+                            return ''; 
+                        }
+                    },
+                    
+                    { data: 'ledger', name: 'ledger' },
+                    { data: 'ledger_name', name: 'ledger_name',
+                        render: function(data, type, row, meta) {
+                            var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
+                            return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                        } 
+                    },
+                    { data: 'entry_type', name: 'entry_type' },
+                    { data: 'alias1', name: 'alias1' },
+                    { data: 'voucher_number', name: 'voucher_number' },
+                    { data: 'debit_total', name: 'debit_total' },
+                    { data: 'credit_total', name: 'credit_total' },
+                    { data: 'balance', name: 'balance' }
+                ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
                     {
@@ -176,47 +192,22 @@
                         }
                     },
                     // 'colvis',
-                    //             {
-                    //                 extend: 'searchBuilder',
-                    //                 config: {
-                    //                     columns: [0, 1, 2, 3, 4, 5, 6, 7]
-                    //                 },
-                    //                 i18n: {
-                    //                     conditions: {
-                    //                         date: {
-                    //                             '=': 'Equals',
-                    //                             '!=': 'Not equal',
-                    //                             'before': 'Before',
-                    //                             'after': 'After'
-                    //                         }
-                    //                     },
-                    //                     date: {
-                    //                         format: 'YYYY-MM-DD'
-                    //                     }
-                    //                 }
-                    //             }
+                    // 'searchBuilder',
+                    // {
+                    //     text: 'Reset Column Order',
+                    //     action: function () {
+                    //         this.colReorder.reset();
+                    //     }
+                    // }
                 ],
-                order: [[0, 'asc']],
+                order: [[4, 'asc']], // Default sorting
                 paging: false, // Remove pagination
 
-
-
-                ordering: true,
-
-                // Column definition for sorting
-                columnDefs: [
-                    {
-                        targets: [0, 1, 2, 3], // Apply sorting to these columns (index starts from 0)
-                        orderable: true // Allow ordering (click to sort) for these columns
-                    }
-                ],
-
-
-
-
+               
             });
 
-                $('#from_date, #to_date').on('change', function () {
+
+            $('#from_date, #to_date').on('change', function () {
                     var fromDate = $('#from_date').val();
                     var toDate = $('#to_date').val();
                     table.ajax.reload(); // Reload DataTable on date change
@@ -233,23 +224,24 @@
                 $('#search').click(function () {
                     var fromDate = $('#from_date').val();
                     var toDate = $('#to_date').val();
-                    var url = "{{ route('dayBook.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
+                    var url = "{{ route('receipts.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
                     window.location.href = url; // Redirect to filtered URL
                 });
 
 
     
-            // Hide DataTable buttons initially
+            // Show DataTable buttons initially
             $('.dt-buttons').show();
     
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
-            $('#collapseProduct').on('shown.bs.collapse', function () {
+            $('#collapseProduct').on('shown.bs.collapse', function() {
                 $('.dt-buttons').show();
-            }).on('hidden.bs.collapse', function () {
+            }).on('hidden.bs.collapse', function() {
                 $('.dt-buttons').hide();
             });
         });
     </script>
+    
     
     
 @endpush

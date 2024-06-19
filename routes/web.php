@@ -8,6 +8,7 @@ use App\Http\Controllers\SuperAdmin\DayBookController;
 use App\Http\Controllers\SuperAdmin\ReceiptController;
 use App\Http\Controllers\SuperAdmin\SocietyController;
 use App\Http\Controllers\SuperAdmin\VoucherController;
+use App\Http\Controllers\SuperAdmin\CheckReceiptController;
 use App\Http\Controllers\SuperAdmin\VoucherEntryController;
 use App\Http\Controllers\SuperAdmin\MemberOutstandingController;
 
@@ -64,6 +65,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/receipts', [ReceiptController::class, 'index'])->name('receipts.index');
     Route::get('/receipts/get-data', [ReceiptController::class, 'getData'])->name('receipts.get-data');
+
+    Route::get('/checkReceipts', [CheckReceiptController::class, 'index'])->name('checkReceipts.index');
+    Route::get('/checkReceipts/get-data', [CheckReceiptController::class, 'getData'])->name('checkReceipts.get-data');
 
 });
 

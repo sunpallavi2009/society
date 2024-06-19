@@ -154,7 +154,7 @@
                 buttons: [
                     'excel', 'pdf', 'print'
                 ],
-                order: [[0, 'asc']],
+                order: [[1, 'asc']],
                 paging: false,
                 ordering: true,
                 columnDefs: [

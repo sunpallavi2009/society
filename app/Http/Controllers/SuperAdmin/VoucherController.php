@@ -44,7 +44,8 @@ class VoucherController extends Controller
                 $query->whereDate('voucher_date', '<=', Carbon::parse($toDate));
             }
             
-            $vouchers = $query->latest()->get();
+            // $vouchers = $query->latest()->get();
+            $vouchers = $query->orderBy('voucher_date', 'asc')->get();
 
             //dd($vouchers);
 
@@ -55,11 +56,12 @@ class VoucherController extends Controller
                     return $date->format('Y-m-d');
                 })
                 ->addColumn('debit', function ($voucher) {
-                    return $voucher->amount < 0 ? abs($voucher->amount) : '';
+                    return $voucher->amount < 0 ? number_format(abs($voucher->amount), 2, '.', '') : '';
                 })
                 ->addColumn('credit', function ($voucher) {
-                    return $voucher->amount >= 0 ? $voucher->amount : '';
+                    return $voucher->amount >= 0 ? number_format($voucher->amount, 2, '.', '') : '';
                 })
+                           
                 ->addIndexColumn()
                 ->with(['societyGuid' => $societyGuid]) 
                 ->make(true);

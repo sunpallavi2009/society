@@ -88,7 +88,7 @@ class BillController extends Controller
                         'opening_balance' => number_format($opening_balance, 2),
                         'amount_billed' => number_format(abs($amount_billed), 2), 
                         'outstanding' => number_format($outstanding, 2),
-                        'amount_received' => $amount_received,
+                        'amount_received' => number_format($amount_received, 2, '.', ''),
                         'this_year_balance' => $member->this_year_balance ?? 0,
                         'guid' => $member->guid, 
                     ];

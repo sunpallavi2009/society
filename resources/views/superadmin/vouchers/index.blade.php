@@ -110,22 +110,22 @@
                                 <tr>
                                     <td></td>
                                     <td colspan="3" style="text-align: left;"><b>Total</b></td>
-                                    <td id="total-debit" style="text-align: right;"></td>
-                                    <td id="total-credit" style="text-align: right;"></td>
+                                    <td id="total-debit" style="text-align: right;font-weight: bolder;"></td>
+                                    <td id="total-credit" style="text-align: right;font-weight: bolder;"></td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
                                     <td colspan="3" style="text-align: left;"><b>Closing Balance</b></td>
-                                    <td id="closing-debit" style="text-align: right;"></td>
-                                    <td id="closing-credit" style="text-align: right;"></td>
+                                    <td id="closing-debit" style="text-align: right;font-weight: bolder;"></td>
+                                    <td id="closing-credit" style="text-align: right;font-weight: bolder;"></td>
                                     <td></td>
                                 </tr>
                                 <tr>
                                     <td></td>
-                                    <td colspan="3" style="text-align: left;"><b>Additional Sum</b></td>
-                                    <td id="additional-sum-debit" style="text-align: right;"></td>
-                                    <td id="additional-sum-credit" style="text-align: right;"></td>
+                                    <td colspan="3" style="text-align: left;"></td>
+                                    <td id="additional-sum-debit" style="text-align: right;font-weight: bolder;"></td>
+                                    <td id="additional-sum-credit" style="text-align: right;font-weight: bolder;"></td>
                                     <td></td>
                                 </tr>
                             </tfoot>  
@@ -187,19 +187,21 @@
                             credit_ledger: '<b>Opening Balance</b>', 
                             type: '', 
                             voucher_number: '', 
-                            debit: openingBalance < 0 ? Math.abs(openingBalance).toFixed(2) : '0.00',
-                            credit: openingBalance >= 0 ? openingBalance.toFixed(2) : '0.00',
+                            debit: openingBalance < 0 ? '<b>' + Math.abs(openingBalance).toFixed(2) + '</b>' : '', 
+                            credit: openingBalance > 0 ? '<b>' + (-openingBalance).toFixed(2) + '</b>' : '', 
                             balance_amount: '', // Set to empty string
                         };
 
                         if (openingBalance === 0) {
-                            openingBalanceRow.debit = '0.00';
-                            openingBalanceRow.credit = '0.00';
+                            openingBalanceRow.debit = '';
+                            openingBalanceRow.credit = '';
                         }
 
                         json.data.unshift(openingBalanceRow);
                         return json.data;
                     }
+
+
                 },
                 columns: [
                     {
@@ -219,22 +221,28 @@
                         className: 'dt-body-center',
                         render: function(data, type, row, meta) {
                             if (data === 'Bill' || data === 'Rcpt') {
-                                var companyGuid = '{{ $society->guid }}';
+                                var companyGuid = '{{ $society ? $society->guid : '' }}';
                                 var ledgerGuid = row.ledger_guid;
                                 var vchDate = moment(row.voucher_date).format('DD/MM/YYYY');
                                 var vchNumber = row.voucher_number;
-                                var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
-                                    '&ledger_guid=' + ledgerGuid +
-                                    '&vch_date=' + vchDate +
-                                    '&vch_number=' + vchNumber +
-                                    '&vch_type=' + data;
 
-                                return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                                if (companyGuid) {
+                                    var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
+                                        '&ledger_guid=' + ledgerGuid +
+                                        '&vch_date=' + vchDate +
+                                        '&vch_number=' + vchNumber +
+                                        '&vch_type=' + data;
+
+                                    return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                                } else {
+                                    return data; // Handle the case where companyGuid is empty or null
+                                }
                             } else {
                                 return data;
                             }
                         }
                     },
+
                     {data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center',},
                     {data: 'debit', name: 'debit', className: 'dt-body-right',},
                     {data: 'credit', name: 'credit', className: 'dt-body-right',},
@@ -317,6 +325,7 @@
                 var totalDebit = 0.00;
                 var totalCredit = 0.00;
 
+                // Calculate total debit and credit from table rows
                 $('#voucher-datatable tbody tr').each(function() {
                     var debit = parseFloat($(this).find('td:nth-child(5)').text().replace(/,/g, '')) || 0;
                     var credit = parseFloat($(this).find('td:nth-child(6)').text().replace(/,/g, '')) || 0;
@@ -324,12 +333,14 @@
                     totalCredit += credit;
                 });
 
+                // Update total debit and credit in the UI
                 $('#total-debit').text(totalDebit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 $('#total-credit').text(totalCredit.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
+                // Calculate total balance
                 var totalBalance = totalCredit - totalDebit;
 
-                // Check if the total balance is positive or negative
+                // Display closing balances
                 if (totalBalance >= 0) {
                     $('#closing-debit').text(totalBalance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                     $('#closing-credit').text('0.00');
@@ -337,7 +348,16 @@
                     $('#closing-debit').text('0.00');
                     $('#closing-credit').text(Math.abs(totalBalance).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 }
+
+                // Hide closing debit and credit if they are '0.00'
+                if ($('#closing-debit').text().trim() === '0.00') {
+                    $('#closing-debit').text('');
+                }
+                if ($('#closing-credit').text().trim() === '0.00') {
+                    $('#closing-credit').text('');
+                }
             }
+
 
             function calculateAdditionalSum() {
                 var additionalSumDebit = 0.00;

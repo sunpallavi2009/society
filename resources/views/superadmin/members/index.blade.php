@@ -81,8 +81,8 @@
                             <tfoot>
                                 <tr>
                                     <th colspan="4">Total</th>
-                                    <th></th>
-                                    <th></th>
+                                    <th style="text-align: right"></th>
+                                    <th style="text-align: center"></th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -119,6 +119,13 @@
                     data: function(d) {
                         d.guid = "{{ $societyGuid }}";
                         d.group = "{{ $group }}"; // Pass the group parameter
+                    },
+                    error: function(xhr, error, thrown) {
+                        if (xhr.status == 404) {
+                            $('#ledger-datatable').DataTable().clear().draw();
+                            $('#ledger-datatable').DataTable().destroy();
+                            $('#ledger-datatable tbody').html('<tr><td colspan="7" class="text-center">Data not found</td></tr>');
+                        }
                     }
                 },
                 columns: [
@@ -204,6 +211,9 @@
                 ],
                 order: [[0, 'asc']], // Default sorting
                 paging: false, // Remove pagination
+                language: {
+                    emptyTable: "No data available in table"
+                },
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
     

@@ -85,6 +85,7 @@
                                     <th>Alias</th>
                                     <th>Vch No.</th>
                                     <th>Inst. No.</th>
+                                    {{-- <th>Type</th> --}}
                                     <th>Amount</th>
                                 </tr>
                             </thead>
@@ -133,6 +134,13 @@
                         d.group = "{{ $group }}"; // Pass the group parameter
                         d.from_date = $('#from_date').val() || "{{ date('Y-m-d') }}"; // Default to current date
                         d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}";
+                    },
+                     error: function(xhr, error, thrown) {
+                        if (xhr.status == 404) {
+                            $('#ledger-datatable').DataTable().clear().draw();
+                            $('#ledger-datatable').DataTable().destroy();
+                            $('#ledger-datatable tbody').html('<tr><td colspan="7" class="text-center">Data not found</td></tr>');
+                        }
                     }
                 },
                 columns: [
@@ -165,6 +173,7 @@
                     { data: 'alias1', name: 'alias1' },
                     { data: 'voucher_number', name: 'voucher_number' },
                     { data: 'instrument_number', name: 'instrument_number' },
+                    // { data: 'type', name: 'type' },
                     { data: 'instrument_amount', name: 'instrument_amount', className: 'dt-body-center', render: function(data) {
                         // Remove minus sign if present
                         var amount = parseFloat(data.replace('-', ''));
