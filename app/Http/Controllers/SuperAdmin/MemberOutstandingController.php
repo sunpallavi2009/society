@@ -68,17 +68,22 @@ class MemberOutstandingController extends Controller
                             }
                         }
                     }
+
+
     
 
                     $lastVoucher = $member->vouchers->last();
                     if ($lastVoucher) {
-                        $opening_balance = $lastVoucher->BAL ?? 0;
+                        // $opening_balance = $lastVoucher->BAL ?? 0;
+                        $opening_balance = floatval($lastVoucher->BAL ?? 0);
                     }
 
-                    
-                    $opening_balance = $member->this_year_balance + (-$amount_billed - $amount_received);
+                    $balance_amount = floatval(optional($member->vouchers->last())->balance_amount ?? 0);
+
+                    $opening_balance = $balance_amount + (-$amount_billed - $amount_received);
                     $opening_balance = ($opening_balance == 0) ? 0 : -$opening_balance;
 
+                
     
                     return [
                         'name' => $member->name,
@@ -88,7 +93,7 @@ class MemberOutstandingController extends Controller
                         'opening_balance' => number_format($opening_balance, 2),
                         'amount_billed' => number_format(abs($amount_billed), 2, '.', ''),
                         'amount_received' => number_format($amount_received, 2, '.', ''),
-                        'this_year_balance' => $member->this_year_balance ?? 0,
+                        'balance_amount' => number_format($balance_amount, 2, '.', ''),
                         'guid' => $member->guid, 
                     ];
                 });

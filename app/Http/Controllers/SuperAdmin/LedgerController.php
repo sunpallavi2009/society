@@ -20,28 +20,28 @@ class LedgerController extends Controller
         $request->validate([
             'uploadFile' => 'required|file',
         ]);
-    
+
         // Process the uploaded file
         $file = $request->file('uploadFile');
         $success = 0;
-    
+
         $fp = fopen($file->getPathname(), 'rb');
         if ($fp !== false) {
             while (($line = fgets($fp)) !== false) {
                 try {
                     $record_json = json_decode($line, true);
-    
+
                     // Insert into database based on record type
                     if (isset($record_json["t"])) {
                         switch ($record_json["t"]) {
                             case "company":
-                                $this->insertOrUpdateCompany($record_json);
+                                $company_guid = $this->insertOrUpdateCompany($record_json);
                                 break;
                             case "group":
                                 $this->insertOrUpdateGroup($record_json);
                                 break;
                             case "l":
-                                $this->insertOrUpdateLedger($record_json);
+                                $this->insertOrUpdateLedger($record_json, $company_guid ?? null);
                                 break;
                             default:
                                 throw new \Exception("Invalid record type: " . $record_json["t"]);
@@ -61,13 +61,13 @@ class LedgerController extends Controller
         } else {
             throw new \Exception("Failed to open file: " . $file->getPathname());
         }
-    
+
         return response()->json(['success' => $success]);
     }
-    
+
     private function insertOrUpdateCompany($record_json)
     {
-        TallyCompany::updateOrCreate(
+        $company = TallyCompany::updateOrCreate(
             ['guid' => $record_json["guid"]],
             [
                 'name' => $record_json["name"],
@@ -81,8 +81,10 @@ class LedgerController extends Controller
                 'company_number' => $record_json["company_number"],
             ]
         );
+
+        return $company->guid;
     }
-    
+
     private function insertOrUpdateGroup($record_json)
     {
         TallyGroup::updateOrCreate(
@@ -94,10 +96,10 @@ class LedgerController extends Controller
             ]
         );
     }
-    
-    private function insertOrUpdateLedger($record_json)
+
+    private function insertOrUpdateLedger($record_json, $company_guid)
     {
-        TallyLedger::updateOrCreate(
+        $ledger = TallyLedger::updateOrCreate(
             ['guid' => $record_json["g"]],
             [
                 'name' => $record_json["n"],
@@ -114,29 +116,35 @@ class LedgerController extends Controller
                 'mobile' => $record_json["m"],
                 'phone' => $record_json["c"],
                 'xml' => json_encode((object)$record_json["x"]),
+                'company_guid' => $company_guid,
             ]
         );
-    
+
         // Process XML data for vouchers and voucher entries
         if (isset($record_json["x"])) {
-            $this->processVoucherData($record_json["g"], $record_json["x"]);
+            $this->processVoucherData($ledger->name,$ledger->guid, $company_guid, $record_json["x"]);
         }
     }
 
-    private function processVoucherData($ledger_guid, $xmlData)
+    private function processVoucherData($ledger_name, $ledger_guid, $company_guid, $xmlData)
     {
         foreach ($xmlData as $voucher) {
             // Extract voucher details
             $voucherData = [
                 'ledger_guid' => $ledger_guid,
+                'company_guid' => $company_guid,
                 'json' => json_encode($voucher), // Store the entire voucher JSON data
             ];
 
             // Decode the JSON and extract specific values
             $decodedVoucher = json_decode($voucherData['json'], true);
 
+            // Calculate the financial year
+            $financialYear = $this->getFinancialYear($decodedVoucher["DATE"]);
+
             // Create new Voucher instance
             $newVoucher = new Voucher($voucherData);
+            $newVoucher->financial_year = $financialYear;
 
             if (isset($decodedVoucher["VNO"])) {
                 $newVoucher->voucher_number = $decodedVoucher["VNO"];
@@ -178,7 +186,7 @@ class LedgerController extends Controller
             // Process BD map if the voucher type is 'Bill' or 'Sale'
             $bd_map = [];
             $amount = isset($decodedVoucher["AMT"]) ? $decodedVoucher["AMT"] : 0;
-            $name = isset($decodedVoucher["ACC"]) ? $decodedVoucher["ACC"] : '';
+            $name = $ledger_name;
 
             switch (strtolower($decodedVoucher['TYPE'])) {
                 case "bill":
@@ -209,7 +217,7 @@ class LedgerController extends Controller
             // Insert the BD map into the VoucherEntries table
             foreach ($bd_map as $key => $value) {
 
-                $entry_type = $amount < 0 ? "debit" : "credit";
+                $entry_type = $value < 0 ? "debit" : "credit";
 
                 VoucherEntry::create([
                     'voucher_id' => $newVoucher->id,
@@ -223,4 +231,30 @@ class LedgerController extends Controller
             }
         }
     }
+
+    private function getFinancialYear($date) {
+        // Convert date string to DateTime object
+        $dateTime = new \DateTime($date);
+    
+        // Get the year and month from the DateTime object
+        $year = (int) $dateTime->format('Y');
+        $month = (int) $dateTime->format('m');
+    
+        // Determine the financial year based on the month
+        if ($month >= 4) {
+            // Financial year starts from April
+            $startYear = $year;
+            $endYear = $year + 1;
+        } else {
+            // Financial year starts from April of the previous year
+            $startYear = $year - 1;
+            $endYear = $year;
+        }
+    
+        // Format the financial year range
+        $financialYear = $startYear . '-' . $endYear;
+    
+        return $financialYear;
+    }
+    
 }

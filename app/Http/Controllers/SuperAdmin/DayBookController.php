@@ -96,8 +96,6 @@ class DayBookController extends Controller
     //     return abort(403, 'Unauthorized action.');
     // }
     
-
-    
     public function getData(Request $request)
     {
         if ($request->ajax()) {
@@ -116,42 +114,98 @@ class DayBookController extends Controller
                 return response()->json(['message' => 'Society not found'], 404);
             }
     
-            $ledgerGuid = $society->guid;
-    
             // Query to fetch vouchers with conditions from related tables
-            $query = Voucher::join('tally_ledgers', 'vouchers.ledger_guid', '=', 'tally_ledgers.guid')
-                            ->join('voucher_entries', 'vouchers.id', '=', 'voucher_entries.voucher_id')
-                            ->where('vouchers.ledger_guid', 'like', "$ledgerGuid%")
-                            ->whereBetween('vouchers.voucher_date', [$fromDate, $toDate])
-                            ->select([
-                                'vouchers.voucher_date as instrument_date',
-                                'tally_ledgers.name as ledger_name',
-                                'voucher_entries.entry_type as entry_type',
-                                'tally_ledgers.alias1',
-                                'vouchers.voucher_number',
-                                'vouchers.narration',
-                                'vouchers.credit_ledger',
-                                'voucher_entries.ledger as ledger',
-                                DB::raw("SUM(CASE WHEN voucher_entries.entry_type = 'debit' THEN voucher_entries.amount ELSE 0 END) as debit_total"),
-                                DB::raw("SUM(CASE WHEN voucher_entries.entry_type = 'credit' THEN voucher_entries.amount ELSE 0 END) as credit_total"),
-                                DB::raw("ABS(SUM(CASE WHEN voucher_entries.entry_type = 'debit' THEN voucher_entries.amount ELSE 0 END)) - 
-                                         ABS(SUM(CASE WHEN voucher_entries.entry_type = 'credit' THEN voucher_entries.amount ELSE 0 END)) as balance"),
-                                DB::raw("CONCAT(vouchers.credit_ledger, ' ', vouchers.narration) as combined_field")
-                            ])
-                            ->groupBy('vouchers.voucher_date', 'tally_ledgers.name','voucher_entries.entry_type', 'tally_ledgers.alias1', 'vouchers.voucher_number', 'vouchers.narration', 'vouchers.credit_ledger', 'voucher_entries.ledger')
-                            ->get();
+            $vouchers = Voucher::whereBetween('voucher_date', [$fromDate, $toDate])
+                                ->with(['voucherEntries'])
+                                ->select([
+                                    'id',
+                                    'voucher_date',
+                                    'type',
+                                    'voucher_number',
+                                    'amount',
+                                ])
+                                ->get();
+    
+            // Calculate totals
+            $query = $vouchers->map(function ($voucher) {
+                $debit_total = $voucher->voucherEntries->where('entry_type', 'debit')->sum('amount');
+                $credit_total = $voucher->voucherEntries->where('entry_type', 'credit')->sum('amount');
+    
+                $ledgerEntries = $voucher->voucherEntries->last()->ledger;
+    
+                return [
+                    'voucher_date' => $voucher->voucher_date,
+                    'ledger' => $ledgerEntries,
+                    'type' => $voucher->type,
+                    'voucher_number' => $voucher->voucher_number,
+                    'amount' => $voucher->amount,
+                    'debit_total' => number_format($debit_total, 2, '.', ''),
+                    'credit_total' => number_format($credit_total, 2, '.', ''),
+                ];
+            });
     
             return DataTables::of($query)
-                ->addIndexColumn()
-                ->editColumn('instrument_amount', function($row) {
-                    $amount = abs($row->instrument_amount); // Remove minus sign if present
-                    return number_format($amount, 2); // Format as currency or numeric
-                })
-                ->make(true);
+                            ->addIndexColumn()
+                            ->addColumn('voucher_date', function($row) {
+                                if ($row['voucher_date']) {
+                                    return date('d-m-Y', strtotime($row['voucher_date']));
+                                }
+                                return 'Invalid date';
+                            })
+                            ->rawColumns(['voucher_date'])
+                            ->make(true);
         }
     
         return abort(403, 'Unauthorized action.');
     }
+    
+    
+    
+    
+
+
+    
+    // public function getData(Request $request)
+    // {
+    //     if ($request->ajax()) {
+    //         $societyGuid = $request->query('guid');
+    //         $fromDate = $request->query('from_date');
+    //         $toDate = $request->query('to_date');
+    
+    //         // Validate input dates
+    //         if (!$fromDate || !$toDate) {
+    //             return response()->json(['error' => 'Both from_date and to_date are required.'], 400);
+    //         }
+    
+    //         $society = TallyCompany::where('guid', 'like', "$societyGuid%")->first();
+    
+    //         if (!$society) {
+    //             return response()->json(['message' => 'Society not found'], 404);
+    //         }
+    
+    //         $ledgerGuid = $society->guid;
+    
+    //         // Query to fetch vouchers with conditions from related tables
+    //         $query = Voucher::whereBetween('voucher_date', [$fromDate, $toDate])
+    //                         ->select([
+    //                             'voucher_date',
+    //                             'type',
+    //                             'voucher_number',
+    //                             'amount',
+    //                         ])
+    //                         ->get();
+    
+    //         return DataTables::of($query)
+    //                         ->addIndexColumn()
+    //                         ->addColumn('voucher_date', function($row) {
+    //                             return $row->voucher_date ? date('d-m-Y', strtotime($row->voucher_date)) : '';
+    //                         })
+    //                         ->rawColumns(['voucher_date'])
+    //                         ->make(true);
+    //     }
+    
+    //     return abort(403, 'Unauthorized action.');
+    // }
     
 
     // public function getData(Request $request)

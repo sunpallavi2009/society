@@ -75,19 +75,15 @@
                         </div>
                     </div>
                     <div class="">
-                        <table id="ledger-datatable" class="display" style="width:100%">
+                        <table id="dayBook-datatable" class="display" style="width:100%">
                             <thead>
                                 <tr>
-                                    {{-- <th>Id</th> --}}
-                                    <th>Date</th>
-                                    <th>Account</th>
-                                    <th>Name</th>
+                                    <th>Voucher Date</th>
+                                    <th>Acc</th>
                                     <th>Type</th>
-                                    <th>Alias</th>
-                                    <th>Vch No.</th>
+                                    <th>Voucher Number</th>
                                     <th>Debit Total</th>
                                     <th>Credit Total</th>
-                                    <th>Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -117,50 +113,38 @@
     <script>
         $(document).ready(function() {
             // Initialize DataTable
-            var table = $('#ledger-datatable').DataTable({
+            var table = $('#dayBook-datatable').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: {
                     url: "{{ route('dayBook.get-data') }}",
                     type: 'GET',
                     data: function(d) {
-                        d.guid = "{{ $societyGuid }}";
-                        d.group = "{{ $group }}"; // Pass the group parameter
                         d.from_date = $('#from_date').val() || "{{ date('Y-m-d') }}"; // Default to current date
                         d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}";
                     },
-                     error: function(xhr, error, thrown) {
+                    error: function(xhr, error, thrown) {
                         if (xhr.status == 404) {
-                            $('#ledger-datatable').DataTable().clear().draw();
-                            $('#ledger-datatable').DataTable().destroy();
-                            $('#ledger-datatable tbody').html('<tr><td colspan="7" class="text-center">Data not found</td></tr>');
+                            $('#dayBook-datatable').DataTable().clear().draw();
+                            $('#dayBook-datatable').DataTable().destroy();
+                            $('#dayBook-datatable tbody').html('<tr><td colspan="3" class="text-center">Data not found</td></tr>');
                         }
                     }
                 },
                 columns: [
-                    // { data: 'ledger_guid', name: 'ledger_guid' },
-                    { data: 'instrument_date', name: 'instrument_date',
+                    { data: 'voucher_date', name: 'voucher_date',
                         render: function(data, type, row) {
-                            if (data) {
-                                return moment(data).format('DD-MM-YY');
+                            if (data && data !== 'Invalid date') {
+                                return moment(data, 'DD-MM-YYYY').format('DD-MM-YYYY');
                             }
-                            return ''; 
+                            return 'Invalid date'; 
                         }
                     },
-                    
-                    { data: 'ledger', name: 'ledger' },
-                    { data: 'ledger_name', name: 'ledger_name',
-                        render: function(data, type, row, meta) {
-                            var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
-                            return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                        } 
-                    },
-                    { data: 'entry_type', name: 'entry_type' },
-                    { data: 'alias1', name: 'alias1' },
-                    { data: 'voucher_number', name: 'voucher_number' },
-                    { data: 'debit_total', name: 'debit_total' },
-                    { data: 'credit_total', name: 'credit_total' },
-                    { data: 'balance', name: 'balance' }
+                    { data: 'ledger', name: 'ledger'},
+                    { data: 'type', name: 'type' },
+                    { data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center' },
+                    { data: 'debit_total', name: 'debit_total', className: 'dt-body-right' },
+                    { data: 'credit_total', name: 'credit_total', className: 'dt-body-right' },
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -190,49 +174,34 @@
                                 page: 'all'
                             }
                         }
-                    },
-                    // 'colvis',
-                    // 'searchBuilder',
-                    // {
-                    //     text: 'Reset Column Order',
-                    //     action: function () {
-                    //         this.colReorder.reset();
-                    //     }
-                    // }
+                    }
                 ],
-                order: [[4, 'asc']], // Default sorting
-                paging: false, // Remove pagination
-
-               
+                order: [[0, 'asc']], // Default sorting by voucher_date
+                paging: false // Remove pagination
             });
 
-
+            // Reload DataTable on date change
             $('#from_date, #to_date').on('change', function () {
-                    var fromDate = $('#from_date').val();
-                    var toDate = $('#to_date').val();
-                    table.ajax.reload(); // Reload DataTable on date change
-                });
+                table.ajax.reload();
+            });
 
-                // Clear filters button functionality
-                $('#clear-filters').click(function () {
-                    $('#from_date, #to_date').val('');
-                    table.ajax.reload(); // Reload DataTable to clear filters
-                });
+            // Clear filters button functionality
+            $('#clear-filters').click(function () {
+                $('#from_date, #to_date').val('');
+                table.ajax.reload();
+            });
 
-                // Search button functionality (redirects to URL)
-               // Search button functionality (redirects to URL)
-                $('#search').click(function () {
-                    var fromDate = $('#from_date').val();
-                    var toDate = $('#to_date').val();
-                    var url = "{{ route('receipts.index') }}?from_date=" + fromDate + "&to_date=" + toDate + "&guid=" + "{{ $societyGuid }}";
-                    window.location.href = url; // Redirect to filtered URL
-                });
+            // Search button functionality (redirects to URL)
+            $('#search').click(function () {
+                var fromDate = $('#from_date').val();
+                var toDate = $('#to_date').val();
+                var url = "{{ route('receipts.index') }}?from_date=" + fromDate + "&to_date=" + toDate;
+                window.location.href = url;
+            });
 
-
-    
             // Show DataTable buttons initially
             $('.dt-buttons').show();
-    
+
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function() {
                 $('.dt-buttons').show();

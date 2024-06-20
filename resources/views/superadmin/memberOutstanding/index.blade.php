@@ -155,8 +155,8 @@
                                 { data: 'amount_billed', name: 'amount_billed' , className: 'dt-body-right'},
                                 { data: 'amount_received', name: 'amount_received' , className: 'dt-body-right'},
                                 {
-                                    data: 'this_year_balance',
-                                    name: 'this_year_balance',
+                                    data: 'balance_amount',
+                                    name: 'balance_amount',
                                     className: 'dt-body-right',
                                     render: function(data, type, row, meta) {
                                         // Invert the sign
