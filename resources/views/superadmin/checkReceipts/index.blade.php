@@ -25,7 +25,7 @@
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg></a></li>
-                    <li class="breadcrumb-item active">Receipts list</li>
+                    <li class="breadcrumb-item active">Check Receipts list</li>
                 </ol>
             </div>
         </div>
@@ -78,14 +78,12 @@
                         <table id="ledger-datatable" class="display" style="width:100%">
                             <thead>
                                 <tr>
-                                    {{-- <th>Id</th> --}}
                                     <th>Date</th>
                                     <th>Account</th>
                                     <th>Name</th>
                                     <th>Alias</th>
                                     <th>Vch No.</th>
                                     <th>Inst. No. / Check No.</th>
-                                    {{-- <th>Type</th> --}}
                                     <th>Amount</th>
                                 </tr>
                             </thead>
@@ -171,8 +169,8 @@
                         } 
                     },
                     { data: 'alias1', name: 'alias1' },
-                    { data: 'voucher_number', name: 'voucher_number' },
-                    { data: 'instrument_number', name: 'instrument_number' },
+                    { data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center' },
+                    { data: 'instrument_number', name: 'instrument_number', className: 'dt-body-center'},
                     // { data: 'type', name: 'type' },
                     { data: 'instrument_amount', name: 'instrument_amount', className: 'dt-body-center', render: function(data) {
                         // Remove minus sign if present

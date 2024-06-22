@@ -174,46 +174,20 @@
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
-                    {
-                        extend: 'excel',
-                        exportOptions: {
-                            columns: ':visible',
-                            modifier: {
-                                page: 'all'
+                            'excel', 'pdf', 'print', 'colvis',
+                            {
+                                extend: 'searchBuilder',
+                                config: {
+                                    columns: [0, 1, 2, 3, 4, 5] // Specify the searchable columns
+                                }
                             }
-                        }
-                    },
-                    {
-                        extend: 'pdf',
-                        exportOptions: {
-                            columns: ':visible',
-                            modifier: {
-                                page: 'all'
-                            }
-                        }
-                    },
-                    {
-                        extend: 'print',
-                        exportOptions: {
-                            columns: ':visible',
-                            modifier: {
-                                page: 'all'
-                            }
-                        }
-                    },
-                    'colvis',
-                    {
-                        extend: 'searchBuilder',
-                        config: {
-                            columns: [0, 1, 2, 3, 4, 5], // Specify the searchable columns
-                        }
-                    }
-                ],
+                        ],
                 order: [[0, 'asc']], // Default sorting
                 paging: false, // Remove pagination
                 language: {
                     emptyTable: "No data available in table"
                 },
+
                 footerCallback: function(row, data, start, end, display) {
                     var api = this.api();
     

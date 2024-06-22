@@ -25,7 +25,7 @@
                         <svg class="stroke-icon">
                             <use href="{{ asset('assets/svg/icon-sprite.svg#stroke-home') }}"></use>
                         </svg></a></li>
-                    <li class="breadcrumb-item active">Receipts list</li>
+                    <li class="breadcrumb-item active">Day Book list</li>
                 </ol>
             </div>
         </div>

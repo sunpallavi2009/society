@@ -94,317 +94,317 @@ function startTime() {
         },
       },
     };
-    var chart = new ApexCharts(document.querySelector("#Earnings-chart"), options);
-    chart.render();
-    var options = {
-      series: [{
-        name: 'Earning',
-        data: [92, 64, 43, 80, 58, 92, 46, 76]
-      }, {
-        name: 'Earning',
-        data: [20, 48, 69, 32, 54, 20, 66, 36],
-      },
-    ],
-    chart: {
-      type: 'bar',
-      offsetY: -10,
-      toolbar: {
-        show: false
-      },
-      height: 203,
-      stacked: true,
-    },
-     states: {          
-      hover: {
-        filter: {
-          type: 'darken',
-          value: 1,
-        }
-      }           
-    },
-    plotOptions: {
-      bar: {
-        horizontal: false,
-        sÌ¶tÌ¶aÌ¶rÌ¶tÌ¶iÌ¶nÌ¶gÌ¶SÌ¶hÌ¶aÌ¶pÌ¶eÌ¶: 'flat',
-        eÌ¶nÌ¶dÌ¶iÌ¶nÌ¶gÌ¶SÌ¶hÌ¶aÌ¶pÌ¶eÌ¶: 'flat',
-        borderRadius: 3,
-        columnWidth: '35%',            
-      }
-    }, 
-    dataLabels: {
-      enabled: false
-    },
-    grid: {
-      yaxis: {
-        lines: {
-          show: false
-        }
-      },
-    },
-    xaxis: {
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-    fill: {
-      opacity: 1,
-      colors: [CrocsAdminConfig.secondary, '#F2F5FA']
-    },
-    legend: {
-      show: false
-    },
-    tooltip: {
-      custom: function ({ series, seriesIndex, dataPointIndex,}) {
-        return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Expenses' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
-      },
-    },
-  };
-  var chart = new ApexCharts(document.querySelector("#Expenses-chart"), options);
-  chart.render();
-    var options = {
-      series: [{
-      name: 'TEAM A',
-      type: 'column',
-      data: [190 ,, 240, , 270, , 220, , 190, , 250, , 250, , 270, , 240]
-    },{
-      name: 'TEAM B',
-      type: 'area',
-      data: [220 , 195, 280, 180, 250, 195, 250, 170, 290 , 190 , 220 , 190 , 230 , 250 , 190 , 225 , 225]
-    }],
-      chart: {
-      height: 315,
-      type: 'area',
-      stacked: false,
-      toolbar: {
-        show: false,
-      }
-    },
-    stroke: {
-      width: [0, 2, 5],
-      curve: 'stepline'
-    },
-    plotOptions: {
-      bar: {
-        columnWidth: '50px'
-      }
-    },
-    colors: [ '#bebebe' , CrocsAdminConfig.primary],
-    dropShadow: {
-      enabled: true,
-      top: 5,
-      left: 6,
-      bottom: 5,
-      blur: 2,
-      color: CrocsAdminConfig.primary,
-      opacity: 0.5,
-    },
-    fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.5,
-          opacityTo: 0.1,
-          stops: [0, 90, 100]
-        }
-      },    
-    grid :{
-      xaxis: {
-        lines: {
-          show: true,
-        }
-      },
-      yaxis: {
-        lines: {
-          show: true,
-        }
-      },
-    },
-    xaxis: {
-      categories: ["Jan", "", "feb", "", "Mar", "", "Apr", "", "May", "", "Jun" ,"" , "July" , "" , "Aug" , "" , "Sep"],
-      labels: {
-        style: {
-            fontFamily: 'Lexend, sans-serif',
-            fontWeight: 600,
-            colors: '#959595',
-        },
-      },
-      axisBorder: {
-        show: false
-      },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-      yaxis: {
-        labels: {
-          style: {
-              fontFamily: 'Lexend, sans-serif',
-              fontWeight: 600,
-              colors: '#171829',
-          },
-        },
-      },
-    legend:{
-      show: false,
-    },
-    tooltip: {
-      custom: function ({ series, seriesIndex, dataPointIndex,}) {
-        return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Growth' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
-      },
-    },
-    };
-    var chart = new ApexCharts(document.querySelector("#growth-chart"), options);
-    chart.render();
+    // var chart = new ApexCharts(document.querySelector("#Earnings-chart"), options);
+  //   chart.render();
+  //   var options = {
+  //     series: [{
+  //       name: 'Earning',
+  //       data: [92, 64, 43, 80, 58, 92, 46, 76]
+  //     }, {
+  //       name: 'Earning',
+  //       data: [20, 48, 69, 32, 54, 20, 66, 36],
+  //     },
+  //   ],
+  //   chart: {
+  //     type: 'bar',
+  //     offsetY: -10,
+  //     toolbar: {
+  //       show: false
+  //     },
+  //     height: 203,
+  //     stacked: true,
+  //   },
+  //    states: {          
+  //     hover: {
+  //       filter: {
+  //         type: 'darken',
+  //         value: 1,
+  //       }
+  //     }           
+  //   },
+  //   plotOptions: {
+  //     bar: {
+  //       horizontal: false,
+  //       // sÌ¶tÌ¶aÌ¶rÌ¶tÌ¶iÌ¶nÌ¶gÌ¶SÌ¶hÌ¶aÌ¶pÌ¶eÌ¶: 'flat',
+  //       // eÌ¶nÌ¶dÌ¶iÌ¶nÌ¶gÌ¶SÌ¶hÌ¶aÌ¶pÌ¶eÌ¶: 'flat',
+  //       borderRadius: 3,
+  //       columnWidth: '35%',            
+  //     }
+  //   }, 
+  //   dataLabels: {
+  //     enabled: false
+  //   },
+  //   grid: {
+  //     yaxis: {
+  //       lines: {
+  //         show: false
+  //       }
+  //     },
+  //   },
+  //   xaxis: {
+  //     labels: {
+  //       show: false,
+  //     },
+  //     axisBorder: {
+  //       show: false,
+  //     },
+  //     axisTicks: {
+  //       show: false,
+  //     },
+  //   },
+  //   yaxis: {
+  //     show: false,
+  //   },
+  //   fill: {
+  //     opacity: 1,
+  //     colors: [CrocsAdminConfig.secondary, '#F2F5FA']
+  //   },
+  //   legend: {
+  //     show: false
+  //   },
+  //   tooltip: {
+  //     custom: function ({ series, seriesIndex, dataPointIndex,}) {
+  //       return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Expenses' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
+  //     },
+  //   },
+  // };
+  // var chart = new ApexCharts(document.querySelector("#Expenses-chart"), options);
+  // chart.render();
+  //   var options = {
+  //     series: [{
+  //     name: 'TEAM A',
+  //     type: 'column',
+  //     data: [190 ,, 240, , 270, , 220, , 190, , 250, , 250, , 270, , 240]
+  //   },{
+  //     name: 'TEAM B',
+  //     type: 'area',
+  //     data: [220 , 195, 280, 180, 250, 195, 250, 170, 290 , 190 , 220 , 190 , 230 , 250 , 190 , 225 , 225]
+  //   }],
+  //     chart: {
+  //     height: 315,
+  //     type: 'area',
+  //     stacked: false,
+  //     toolbar: {
+  //       show: false,
+  //     }
+  //   },
+  //   stroke: {
+  //     width: [0, 2, 5],
+  //     curve: 'stepline'
+  //   },
+  //   plotOptions: {
+  //     bar: {
+  //       columnWidth: '50px'
+  //     }
+  //   },
+  //   colors: [ '#bebebe' , CrocsAdminConfig.primary],
+  //   dropShadow: {
+  //     enabled: true,
+  //     top: 5,
+  //     left: 6,
+  //     bottom: 5,
+  //     blur: 2,
+  //     color: CrocsAdminConfig.primary,
+  //     opacity: 0.5,
+  //   },
+  //   fill: {
+  //       type: "gradient",
+  //       gradient: {
+  //         shadeIntensity: 1,
+  //         opacityFrom: 0.5,
+  //         opacityTo: 0.1,
+  //         stops: [0, 90, 100]
+  //       }
+  //     },    
+  //   grid :{
+  //     xaxis: {
+  //       lines: {
+  //         show: true,
+  //       }
+  //     },
+  //     yaxis: {
+  //       lines: {
+  //         show: true,
+  //       }
+  //     },
+  //   },
+  //   xaxis: {
+  //     categories: ["Jan", "", "feb", "", "Mar", "", "Apr", "", "May", "", "Jun" ,"" , "July" , "" , "Aug" , "" , "Sep"],
+  //     labels: {
+  //       style: {
+  //           fontFamily: 'Lexend, sans-serif',
+  //           fontWeight: 600,
+  //           colors: '#959595',
+  //       },
+  //     },
+  //     axisBorder: {
+  //       show: false
+  //     },
+  //   },
+  //   dataLabels: {
+  //     enabled: false,
+  //   },
+  //     yaxis: {
+  //       labels: {
+  //         style: {
+  //             fontFamily: 'Lexend, sans-serif',
+  //             fontWeight: 600,
+  //             colors: '#171829',
+  //         },
+  //       },
+  //     },
+  //   legend:{
+  //     show: false,
+  //   },
+  //   tooltip: {
+  //     custom: function ({ series, seriesIndex, dataPointIndex,}) {
+  //       return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Growth' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
+  //     },
+  //   },
+  //   };
+    // var chart = new ApexCharts(document.querySelector("#growth-chart"), options);
+    // chart.render();
       // overview chart
-      var optionsoverview = {
-        series: [
-          {
-            name: "Earning",
-            type: "area",
-            data: [55, 44, 47, 44, 50, 50, 55, 45, 32, 50, 60, 32, 38, 45, 40, 40, 50],
-          },
-          {
-            name: "Order",
-            type: "line",
-            data: [54, 64, 40, 50, 60, 80, 60, 70, 62, 50, 45, 40, 60, 65 , 70],
-          },
-        ],
-        chart: {
-          height: 250,
-          type: "line",
-          stacked: false,
-          toolbar: {
-            show: false,
-          },
-          dropShadow: {
-            enabled: true,
-            top: 2,
-            left: 4,
-            blur: 4,
-            color: "#000",
-            opacity: 0.08,
-          },
-        },
-        stroke: {
-          width: [2, 2],
-          curve: "smooth",
-          dashArray: [0, 8]
-        },
-        grid: {
-          show: false,
-          xaxis: {
-            lines: {
-              show: true,
-            },
-          },
-          padding: {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-          },
-        },
-        plotOptions: {
-          bar: {
-            columnWidth: "50%",
-          },
-        },
-        colors: ["#7064F5", "#FF9766"],
-        fill: {
-          type: ["gradient" , "solid"],
-          gradient: {
-            shade: "light",
-            type: "vertical",
-            opacityFrom: 0.4,
-            opacityTo: 0,
-            stops: [0, 100],
-          },
-        },
-        labels: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Aug",
-          "Sep",
-        ],
-        markers: {
-          discrete: [
-            {
-              seriesIndex: 0,
-              dataPointIndex: 6,
-              fillColor: "#7064F5",
-              strokeColor: "var(--white)",
-              size: 5,
-              sizeOffset: 3,
-            },
-          ],
-          hover: {
-            size: 5,
-            sizeOffset: 0,
-          },
-        },
-        xaxis: {
-          type: "category",
-          tickAmount: 4,
-          tickPlacement: "between",
-          tooltip: {
-            enabled: false,
-          },
-          axisBorder: {
-            color: "var(--chart-border)",
-          },
-          axisTicks: {
-            show: false,
-          },
-        },
-        legend: {
-          show: false,
-        },
-        yaxis: {
-          show: false,
-        },
-        tooltip: {
-          shared: true,
-          intersect: false,
-        },
-        responsive: [
-          {
-            breakpoint: 1200,
-            options: {
-              chart: {
-                height: 250,
-              },
-            },
-          },
-        ],
-        tooltip: {
-          custom: function ({ series, seriesIndex, dataPointIndex,}) {
-            return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Earnings :' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
-          },
-        },
-      };
-      var chartoverview = new ApexCharts(
-        document.querySelector("#orderoverview"),
-        optionsoverview
-      );
-      chartoverview.render();
+      // var optionsoverview = {
+      //   series: [
+      //     {
+      //       name: "Earning",
+      //       type: "area",
+      //       data: [55, 44, 47, 44, 50, 50, 55, 45, 32, 50, 60, 32, 38, 45, 40, 40, 50],
+      //     },
+      //     {
+      //       name: "Order",
+      //       type: "line",
+      //       data: [54, 64, 40, 50, 60, 80, 60, 70, 62, 50, 45, 40, 60, 65 , 70],
+      //     },
+      //   ],
+      //   chart: {
+      //     height: 250,
+      //     type: "line",
+      //     stacked: false,
+      //     toolbar: {
+      //       show: false,
+      //     },
+      //     dropShadow: {
+      //       enabled: true,
+      //       top: 2,
+      //       left: 4,
+      //       blur: 4,
+      //       color: "#000",
+      //       opacity: 0.08,
+      //     },
+      //   },
+      //   stroke: {
+      //     width: [2, 2],
+      //     curve: "smooth",
+      //     dashArray: [0, 8]
+      //   },
+      //   grid: {
+      //     show: false,
+      //     xaxis: {
+      //       lines: {
+      //         show: true,
+      //       },
+      //     },
+      //     padding: {
+      //       top: 0,
+      //       right: 0,
+      //       bottom: 0,
+      //       left: 0,
+      //     },
+      //   },
+      //   plotOptions: {
+      //     bar: {
+      //       columnWidth: "50%",
+      //     },
+      //   },
+      //   colors: ["#7064F5", "#FF9766"],
+      //   fill: {
+      //     type: ["gradient" , "solid"],
+      //     gradient: {
+      //       shade: "light",
+      //       type: "vertical",
+      //       opacityFrom: 0.4,
+      //       opacityTo: 0,
+      //       stops: [0, 100],
+      //     },
+      //   },
+      //   labels: [
+      //     "Jan",
+      //     "Feb",
+      //     "Mar",
+      //     "Apr",
+      //     "May",
+      //     "Jun",
+      //     "Jul",
+      //     "Aug",
+      //     "Sep",
+      //     "Oct",
+      //     "Nov",
+      //     "Aug",
+      //     "Sep",
+      //   ],
+      //   markers: {
+      //     discrete: [
+      //       {
+      //         seriesIndex: 0,
+      //         dataPointIndex: 6,
+      //         fillColor: "#7064F5",
+      //         strokeColor: "var(--white)",
+      //         size: 5,
+      //         sizeOffset: 3,
+      //       },
+      //     ],
+      //     hover: {
+      //       size: 5,
+      //       sizeOffset: 0,
+      //     },
+      //   },
+      //   xaxis: {
+      //     type: "category",
+      //     tickAmount: 4,
+      //     tickPlacement: "between",
+      //     tooltip: {
+      //       enabled: false,
+      //     },
+      //     axisBorder: {
+      //       color: "var(--chart-border)",
+      //     },
+      //     axisTicks: {
+      //       show: false,
+      //     },
+      //   },
+      //   legend: {
+      //     show: false,
+      //   },
+      //   yaxis: {
+      //     show: false,
+      //   },
+      //   tooltip: {
+      //     shared: true,
+      //     intersect: false,
+      //   },
+      //   responsive: [
+      //     {
+      //       breakpoint: 1200,
+      //       options: {
+      //         chart: {
+      //           height: 250,
+      //         },
+      //       },
+      //     },
+      //   ],
+      //   tooltip: {
+      //     custom: function ({ series, seriesIndex, dataPointIndex,}) {
+      //       return '<div class="apex-tooltip p-2">' + '<span>' + '<span class="bg-primary">' + '</span>' + 'Earnings :' + '<h3>' + '$'+ series[seriesIndex][dataPointIndex] + '<h3/>'  + '</span>' + '</div>';
+      //     },
+      //   },
+      // };
+      // var chartoverview = new ApexCharts(
+      //   document.querySelector("#orderoverview"),
+      //   optionsoverview
+      // );
+      // chartoverview.render();
       // bar overview chart
     var optionsorder = {
       series: [
@@ -507,8 +507,8 @@ function startTime() {
         },
       ],
     };
-    var chartorder = new ApexCharts(
-      document.querySelector("#order-bar"),
-      optionsorder
-    );
-    chartorder.render();
+    // var chartorder = new ApexCharts(
+    //   document.querySelector("#order-bar"),
+    //   optionsorder
+    // );
+    // chartorder.render();

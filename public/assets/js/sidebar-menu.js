@@ -435,17 +435,13 @@
     }
   
     // active link
-    if (
-      $(".simplebar-wrapper .simplebar-content-wrapper") &&
-      $("#pageWrapper").hasClass("compact-wrapper")
-    ) {
-      $(".simplebar-wrapper .simplebar-content-wrapper").animate(
-        {
-          scrollTop:
-            $(".simplebar-wrapper .simplebar-content-wrapper a.active").offset()
-              .top - 400,
-        },
-        1000
-      );
+    if ($(".simplebar-wrapper .simplebar-content-wrapper").length > 0 && $("#pageWrapper").hasClass("compact-wrapper")) {
+      var activeLink = $(".simplebar-wrapper .simplebar-content-wrapper a.active");
+      if (activeLink.length > 0) {
+          $(".simplebar-wrapper .simplebar-content-wrapper").animate({
+              scrollTop: activeLink.offset().top - 400
+          }, 1000);
+      }
     }
+
   })(jQuery);

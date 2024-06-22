@@ -10,6 +10,7 @@ use App\Http\Controllers\SuperAdmin\SocietyController;
 use App\Http\Controllers\SuperAdmin\VoucherController;
 use App\Http\Controllers\SuperAdmin\CheckReceiptController;
 use App\Http\Controllers\SuperAdmin\VoucherEntryController;
+use App\Http\Controllers\SuperAdmin\BillGenerationController;
 use App\Http\Controllers\SuperAdmin\MemberOutstandingController;
 
 /*
@@ -68,6 +69,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/checkReceipts', [CheckReceiptController::class, 'index'])->name('checkReceipts.index');
     Route::get('/checkReceipts/get-data', [CheckReceiptController::class, 'getData'])->name('checkReceipts.get-data');
+
+    Route::get('/billGeneration', [BillGenerationController::class, 'index'])->name('billGeneration.index');
+
 
 });
 

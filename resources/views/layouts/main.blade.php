@@ -34,7 +34,7 @@
     {{-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/datatables.css') }}"> --}}
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/date-picker.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/vector-map.css') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/fullcalender.css') }}">
+    <!-- <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/fullcalender.css') }}"> -->
     <!-- Plugins css Ends-->
     <!-- Bootstrap css-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/vendors/bootstrap.css') }}">
@@ -106,23 +106,23 @@
      <!-- Plugins JS start-->
      <script src="{{ asset('assets/js/sidebar-menu.js') }}"></script>
      <script src="{{ asset('assets/js/sidebar-pin.js') }}"></script>
-     <script src="{{ asset('assets/js/clock.js') }}"></script>
+     <!-- <script src="{{ asset('assets/js/clock.js') }}"></script> -->
      <script src="{{ asset('assets/js/calendar/fullcalendar.min.js') }}"></script>
-     <script src="{{ asset('assets/js/calendar/fullcalendar-custom.js') }}"></script>
-     <script src="{{ asset('assets/js/calendar/fullcalender.js') }}"></script>
-     <script src="{{ asset('assets/js/calendar/custom-calendar.js') }}"></script>
-     <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script>
+     <!-- <script src="{{ asset('assets/js/calendar/fullcalendar-custom.js') }}"></script> -->
+     <!-- <script src="{{ asset('assets/js/calendar/fullcalender.js') }}"></script> -->
+     <!-- <script src="{{ asset('assets/js/calendar/custom-calendar.js') }}"></script> -->
+     <!-- <script src="{{ asset('assets/js/chart/apex-chart/apex-chart.js') }}"></script> -->
      <script src="{{ asset('assets/js/chart/apex-chart/stock-prices.js') }}"></script>
      <script src="{{ asset('assets/js/chart/apex-chart/moment.min.js') }}"></script>
      <script src="{{ asset('assets/js/notify/bootstrap-notify.min.js') }}"></script>
-     <script src="{{ asset('assets/js/vector-map/jquery-jvectormap-2.0.2.min.js') }}"></script>
-     <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-world-mill-en.js') }}"></script>
+     <!-- <script src="{{ asset('assets/js/vector-map/jquery-jvectormap-2.0.2.min.js') }}"></script> -->
+     <!-- <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-world-mill-en.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-us-aea-en.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-uk-mill-en.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-au-mill.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-chicago-mill-en.js') }}"></script>
      <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-in-mill.js') }}"></script>
-     <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-asia-mill.js') }}"></script>
+     <script src="{{ asset('assets/js/vector-map/map/jquery-jvectormap-asia-mill.js') }}"></script> -->
      <script src="{{ asset('assets/js/dashboard/default.js') }}"></script>
      <script src="{{ asset('assets/js/notify/index.js') }}"></script>
      <script src="{{ asset('assets/js/datatable/datatables/jquery.dataTables.min.js') }}"></script>
@@ -132,11 +132,11 @@
      <script src="{{ asset('assets/js/datepicker/date-picker/datepicker.en.js') }}"></script>
      <script src="{{ asset('assets/js/datepicker/date-picker/datepicker.custom.js') }}"></script>
      <script src="{{ asset('assets/js/typeahead/handlebars.js') }}"></script>
-     <script src="{{ asset('assets/js/typeahead/typeahead.bundle.js') }}"></script>
-     <script src="{{ asset('assets/js/typeahead/typeahead.custom.js') }}"></script>
+     <!-- <script src="{{ asset('assets/js/typeahead/typeahead.bundle.js') }}"></script>
+     <script src="{{ asset('assets/js/typeahead/typeahead.custom.js') }}"></script> -->
      <script src="{{ asset('assets/js/typeahead-search/handlebars.js') }}"></script>
-     <script src="{{ asset('assets/js/typeahead-search/typeahead-custom.js') }}"></script>
-     <script src="{{ asset('assets/js/vector-map/map-vector.js') }}"></script>
+     <!-- <script src="{{ asset('assets/js/typeahead-search/typeahead-custom.js') }}"></script> -->
+     <!-- <script src="{{ asset('assets/js/vector-map/map-vector.js') }}"></script> -->
 
 
      <script src="{{ asset('assets/js/slick/slick.min.js') }}"></script>
@@ -154,9 +154,11 @@
      <!-- Plugin used-->
 
 
-    <script>
-        document.getElementById('back-button').addEventListener('click', function() {
-            history.back();
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('back-button').addEventListener('click', function() {
+                history.back();
+            });
         });
     </script>
 

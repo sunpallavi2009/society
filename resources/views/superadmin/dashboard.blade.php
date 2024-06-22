@@ -202,6 +202,30 @@
             </div>
           </div>
 
+
+          <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6">
+            <div class="card total-sales">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-xl-8 xl-12 col-md-8 col-sm-12 col box-col-12">
+                    <div class="d-flex up-sales"><span> 
+                        <svg>
+                          <use href="{{ asset('assets/svg/icon-sprite.svg#Sales') }}"></use>
+                        </svg></span>
+                      <div class="flex-shrink-0 pt-4"> 
+                        {{-- <h4>24k USD</h4> --}}
+                        <a href="{{ route('billGeneration.index', ['guid' => $societyGuid]) }}" style="color: #337ab7;">
+                            <h6 style="color: #000000 !important;">Bill Generation</h6>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
         </div>
       </div>
       
