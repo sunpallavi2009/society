@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tally_ledgers', function (Blueprint $table) {
-            $table->uuid('company_guid');
+            $table->uuid('company_guid')->after('guid');
             $table->foreign('company_guid')->references('guid')->on('tally_companies');
         });
     }

@@ -18,7 +18,7 @@ class DayBookController extends Controller
     public function index(Request $request)
     {
         $societyGuid = $request->query('guid');
-        $group = $request->query('group', 'Sundry Debtors'); // default to 'Sundry Debtors' if not provided
+        $group = $request->query('group', 'Sundry Debtors');
         $ledgerGuid = $request->query('ledger_guid');
         $society = TallyCompany::where('guid', 'like', "$societyGuid%")->get();
         // dd($society);
