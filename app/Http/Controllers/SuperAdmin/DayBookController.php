@@ -65,10 +65,12 @@ class DayBookController extends Controller
                 $credit_total = $voucher->voucherEntries->where('entry_type', 'credit')->sum('amount');
     
                 $ledgerEntries = $voucher->voucherEntries->last()->ledger;
+                $ledgerguidEntries = $voucher->voucherEntries->last()->ledger_guid;
     
                 return [
                     'voucher_date' => $voucher->voucher_date,
                     'ledger' => $ledgerEntries,
+                    'ledger_guid' => $ledgerguidEntries,
                     'type' => $voucher->type,
                     'voucher_number' => $voucher->voucher_number,
                     'amount' => $voucher->amount,

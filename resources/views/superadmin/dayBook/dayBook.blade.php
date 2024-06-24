@@ -80,6 +80,7 @@
                                 <tr>
                                     <th>Voucher Date</th>
                                     <th>Acc</th>
+                                    <!-- <th>ledger</th> -->
                                     <th>Type</th>
                                     <th>Voucher Number</th>
                                     <th>Debit Total</th>
@@ -151,35 +152,33 @@
                         }
                     },
                     { data: 'ledger', name: 'ledger'},
+                    // { data: 'ledger_guid', name: 'ledger_guid'},
                     {
-                        data: 'type', 
-                        name: 'type',
-                        render: function(data, type, row, meta) {
-                            // Add console.log here to inspect row object
-                            console.log(row); // Log the row object to inspect its contents
+                    data: 'type',
+                    name: 'type',
+                    render: function(data, type, row, meta) {
+                        var companyGuid = '{{ $company->guid ?? '' }}';
+                        var ledgerGuid = row.ledger_guid;
+                        var vchDate = moment(row.voucher_date, 'YYYY-MM-DD').format('DD/MM/YYYY');
+                        var vchNumber = row.voucher_number;
 
-                            if (data === 'Bill' || data === 'Rcpt') {
-                                var companyGuid = '{{ $company->guid ?? '' }}'; // Access the guid property of $company
-                                var ledgerGuid = row.ledger_guid; // Here you're accessing ledger_guid from row object
-                                var vchDate = moment(row.voucher_date).format('DD/MM/YYYY');
-                                var vchNumber = row.voucher_number;
+                        if (data === 'Bill' || data === 'Rcpt') {
+                            if (companyGuid && ledgerGuid) {
+                                var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
+                                    '&ledger_guid=' + ledgerGuid +
+                                    '&vch_date=' + vchDate +
+                                    '&vch_number=' + vchNumber +
+                                    '&vch_type=' + data;
 
-                                if (companyGuid) {
-                                    var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
-                                        '&ledger_guid=' + ledgerGuid +
-                                        '&vch_date=' + vchDate +
-                                        '&vch_number=' + vchNumber +
-                                        '&vch_type=' + data;
-
-                                    return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
-                                } else {
-                                    return data; // Handle the case where companyGuid is empty or null
-                                }
+                                return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
                             } else {
                                 return data;
                             }
+                        } else {
+                            return data;
                         }
-                    },
+                    }
+                },
                     { data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center' },
                     { data: 'debit_total', name: 'debit_total', className: 'dt-body-right' },
                     { data: 'credit_total', name: 'credit_total', className: 'dt-body-right' },
