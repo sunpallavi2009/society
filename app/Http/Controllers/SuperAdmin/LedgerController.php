@@ -15,79 +15,80 @@ use App\Http\Controllers\Controller;
 class LedgerController extends Controller
 {
     public function upload(Request $request)
-    {
-        // Ensure file is present and valid
-        $request->validate([
-            'uploadFile' => 'required|file',
-        ]);
+{
+    // Ensure file is present and valid
+    $request->validate([
+        'uploadFile' => 'required|file',
+    ]);
 
-        // Process the uploaded file
-        $file = $request->file('uploadFile');
-        $success = 0;
-        $records = [];
+    // Process the uploaded file
+    $file = $request->file('uploadFile');
+    $success = 0;
+    $records = [];
 
-        $fp = fopen($file->getPathname(), 'rb');
-        if ($fp !== false) {
-            while (($line = fgets($fp)) !== false) {
-                try {
-                    $record_json = json_decode($line, true);
-                    // Store records in array for sorting later
-                    if (isset($record_json["t"])) {
-                        $records[] = $record_json;
-                    } else {
-                        throw new \Exception("Record type not found");
-                    }
-                } catch (\Exception $e) {
-                    // Handle exceptions
-                    // Optionally log the error for debugging
-                    Log::error('Error processing record: ' . $e->getMessage());
-                    Log::error('Record data: ' . $line);
+    $fp = fopen($file->getPathname(), 'rb');
+    if ($fp !== false) {
+        while (($line = fgets($fp)) !== false) {
+            try {
+                $record_json = json_decode($line, true);
+                // Store records in array for sorting later
+                if (isset($record_json["t"])) {
+                    $records[] = $record_json;
+                } else {
+                    throw new \Exception("Record type not found");
                 }
+            } catch (\Exception $e) {
+                // Handle exceptions
+                // Optionally log the error for debugging
+                Log::error('Error processing record: ' . $e->getMessage());
+                Log::error('Record data: ' . $line);
             }
-            fclose($fp);
-
-            // Sort records to process "Sundry Debtors" first
-            usort($records, function($a, $b) {
-                if (isset($a['pg']) && isset($b['pg'])) {
-                    if ($a['pg'] == "Sundry Debtors" && $b['pg'] != "Sundry Debtors") {
-                        return -1;
-                    } elseif ($a['pg'] != "Sundry Debtors" && $b['pg'] == "Sundry Debtors") {
-                        return 1;
-                    }
-                }
-                return 0;
-            });
-
-            // Process sorted records
-            foreach ($records as $record_json) {
-                try {
-                    switch ($record_json["t"]) {
-                        case "company":
-                            $company_guid = $this->insertOrUpdateCompany($record_json);
-                            break;
-                        case "group":
-                            $this->insertOrUpdateGroup($record_json);
-                            break;
-                        case "l":
-                            $this->insertOrUpdateLedger($record_json, $company_guid ?? null);
-                            break;
-                        default:
-                            throw new \Exception("Invalid record type: " . $record_json["t"]);
-                    }
-                    $success++;
-                } catch (\Exception $e) {
-                    // Handle exceptions
-                    // Optionally log the error for debugging
-                    Log::error('Error processing record: ' . $e->getMessage());
-                    Log::error('Record data: ' . json_encode($record_json));
-                }
-            }
-        } else {
-            throw new \Exception("Failed to open file: " . $file->getPathname());
         }
+        fclose($fp);
 
-        return response()->json(['success' => $success]);
+        // Sort records to process "Sundry Debtors" first
+        usort($records, function($a, $b) {
+            if (isset($a['pg']) && isset($b['pg'])) {
+                if ($a['pg'] == "Sundry Debtors" && $b['pg'] != "Sundry Debtors") {
+                    return -1;
+                } elseif ($a['pg'] != "Sundry Debtors" && $b['pg'] == "Sundry Debtors") {
+                    return 1;
+                }
+            }
+            return 0;
+        });
+
+        // Process sorted records
+        foreach ($records as $record_json) {
+            try {
+                switch ($record_json["t"]) {
+                    case "company":
+                        $company_guid = $this->insertOrUpdateCompany($record_json);
+                        break;
+                    case "group":
+                        $this->insertOrUpdateGroup($record_json);
+                        break;
+                    case "l":
+                        $this->insertOrUpdateLedger($record_json, $company_guid ?? null);
+                        break;
+                    default:
+                        throw new \Exception("Invalid record type: " . $record_json["t"]);
+                }
+                $success++;
+            } catch (\Exception $e) {
+                // Handle exceptions
+                // Optionally log the error for debugging
+                Log::error('Error processing record: ' . $e->getMessage());
+                Log::error('Record data: ' . json_encode($record_json));
+            }
+        }
+    } else {
+        throw new \Exception("Failed to open file: " . $file->getPathname());
     }
+
+    return response()->json(['success' => $success]);
+}
+
 
     private function insertOrUpdateCompany($record_json)
     {
@@ -146,7 +147,7 @@ class LedgerController extends Controller
 
         // Process XML data for vouchers and voucher entries
         if (isset($record_json["x"])) {
-            $this->processVoucherData($ledger->name, $ledger->guid, $company_guid, $record_json["x"]);
+            $this->processVoucherData($ledger->name,$ledger->guid, $company_guid, $record_json["x"]);
         }
     }
 
@@ -174,7 +175,7 @@ class LedgerController extends Controller
                 if (isset($decodedVoucher["VNO"])) {
                     $newVoucher->voucher_number = $decodedVoucher["VNO"];
                 }
-                if (isset($decodedVoucher["DATE"]) && is_string($decodedVoucher["DATE"])) {
+                if (isset($decodedVoucher["DATE"])) {
                     $newVoucher->voucher_date = Carbon::parse($decodedVoucher["DATE"])->format('Y-m-d');
                 }
                 if (isset($decodedVoucher["TYPE"])) {
@@ -192,7 +193,7 @@ class LedgerController extends Controller
                 if (isset($decodedVoucher["BAL"])) {
                     $newVoucher->balance_amount = $decodedVoucher["BAL"];
                 }
-                if (isset($decodedVoucher["IDATE"]) && is_string($decodedVoucher["IDATE"])) {
+                if (isset($decodedVoucher["IDATE"])) {
                     $newVoucher->instrument_date = Carbon::parse($decodedVoucher["IDATE"])->format('Y-m-d');
                 }
                 if (isset($decodedVoucher["INO"])) {
@@ -234,39 +235,68 @@ class LedgerController extends Controller
                         }
                         $bd_map[$name] = $amount;
                         break;
+                    default:
+                        $bd_map[$name] = $amount;
+                        $bd_map[$decodedVoucher['ACC']] = -$amount;
                 }
 
-                // Process BD map
+                // Log the BD map for debugging
+                // Log::info('BD Map: ', $bd_map);
+
+                // Insert the BD map into the VoucherEntries table
                 foreach ($bd_map as $key => $value) {
-                    VoucherEntry::updateOrCreate(
-                        ['voucher_id' => $newVoucher->id, 'ledger_name' => $key],
-                        ['amount' => $value]
-                    );
+                    $entry_type = $value < 0 ? "debit" : "credit";
+
+                    $voucherEntryData = [
+                        'voucher_id' => $newVoucher->id,
+                        'ledger' => $key,
+                        'amount' => $value,
+                        'account' => $decodedVoucher["ACC"], // Store the account value
+                        'type' => $decodedVoucher["TYPE"], // Store the type value
+                        'narration' => $decodedVoucher["NAR"] ?? null, // Store the narration value
+                        'entry_type' => $entry_type,
+                    ];
+
+                    // Add ledger_guid if key matches ledger_name
+                    if ($key === $ledger_name) {
+                        $voucherEntryData['ledger_guid'] = $ledger_guid;
+                    }
+
+                    VoucherEntry::create($voucherEntryData);
                 }
             } catch (\Exception $e) {
-                Log::error('Error processing voucher data: ' . $e->getMessage());
+                // Handle exceptions
+                // Optionally log the error for debugging
+                Log::error('Error processing voucher: ' . $e->getMessage());
                 Log::error('Voucher data: ' . json_encode($voucher));
             }
         }
     }
+    
 
-    private function getFinancialYear($date)
-    {
-        // Make sure date is a string before parsing
-        if (!is_string($date)) {
-            throw new \Exception('Invalid date format');
-        }
-
-        $date = Carbon::parse($date);
-        $month = $date->month;
-        $year = $date->year;
-
-        if ($month < 4) {
-            $financialYear = ($year - 1) . '-' . $year;
+    private function getFinancialYear($date) {
+        // Convert date string to DateTime object
+        $dateTime = new \DateTime($date);
+    
+        // Get the year and month from the DateTime object
+        $year = (int) $dateTime->format('Y');
+        $month = (int) $dateTime->format('m');
+    
+        // Determine the financial year based on the month
+        if ($month >= 4) {
+            // Financial year starts from April
+            $startYear = $year;
+            $endYear = $year + 1;
         } else {
-            $financialYear = $year . '-' . ($year + 1);
+            // Financial year starts from April of the previous year
+            $startYear = $year - 1;
+            $endYear = $year;
         }
-
+    
+        // Format the financial year range
+        $financialYear = $startYear . '-' . $endYear;
+    
         return $financialYear;
     }
+    
 }
