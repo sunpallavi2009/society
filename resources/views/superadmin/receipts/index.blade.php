@@ -83,9 +83,9 @@
                                     <th>Account</th>
                                     <th>Name</th>
                                     <th>Alias</th>
+                                    <th>Type</th>
                                     <th>Vch No.</th>
                                     <th>Inst. No.</th>
-                                    {{-- <th>Type</th> --}}
                                     <th>Amount</th>
                                 </tr>
                             </thead>
@@ -95,7 +95,7 @@
                             <tfoot>
                                 <tr>
                                     <th>Total</th>
-                                    <th colspan="5"></th>
+                                    <th colspan="6"></th>
                                     <th style="text-align:right"></th>
                                 </tr>
                             </tfoot>
@@ -164,16 +164,16 @@
                         },
                         name: 'combined_field' // Use the same name for sorting
                     },
-                    { data: 'ledger_name', name: 'ledger_name',
+                    { data: 'ledger', name: 'ledger',
                         render: function(data, type, row, meta) {
                             var url = "{{ route('vouchers.index') }}?ledger_guid=" + row.guid;
                             return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
                         } 
                     },
                     { data: 'alias1', name: 'alias1' },
+                    { data: 'type', name: 'type' },
                     { data: 'voucher_number', name: 'voucher_number' },
                     { data: 'instrument_number', name: 'instrument_number' },
-                    // { data: 'type', name: 'type' },
                     { data: 'instrument_amount', name: 'instrument_amount', className: 'dt-body-center', render: function(data) {
                         // Remove minus sign if present
                         var amount = parseFloat(data.replace('-', ''));
@@ -234,14 +234,14 @@
 
                     // Total over all pages
                     total = api
-                        .column(6)
+                        .column(7)
                         .data()
                         .reduce(function(a, b) {
                             return intVal(a) + intVal(b);
                         }, 0);
 
                     // Update footer
-                    $(api.column(6).footer()).html(
+                    $(api.column(7).footer()).html(
                         total.toLocaleString('en-US', { minimumFractionDigits: 2 })
                     );
                 }

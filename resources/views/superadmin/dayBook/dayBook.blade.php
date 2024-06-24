@@ -35,19 +35,19 @@
     <div class="row">
 
         <div class="col-sm-12">
+            @foreach ($society as $company) <!-- Iterate over $society collection -->
             <div class="card">
                 <div class="card-body">
                     <div class="text-center text-black">
                         <h6 class="text-black">
-                            @foreach ($society as $company)
-                                <h3><b>{{ $company->name }}</b></h3>
-                                <h6>{{ $company->address1 }}</h6>
-                            @endforeach
+                            <h3><b>{{ $company->name }}</b></h3>
+                            <h6>{{ $company->address1 }}</h6>
                             <p>Day Book</p>
                         </h6>
                     </div>
                 </div>
             </div>
+            @endforeach
         </div>
 
         <div class="col-sm-12">
@@ -89,6 +89,14 @@
                             <tbody>
                                 <!-- Data will be populated by DataTables -->
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Total</th>
+                                    <th colspan="3"></th>
+                                    <th style="text-align: right;"></th>
+                                    <th style="text-align: right;"></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -96,6 +104,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('javascript')
@@ -120,6 +129,7 @@
                     url: "{{ route('dayBook.get-data') }}",
                     type: 'GET',
                     data: function(d) {
+                        d.ledger_guid = "{{ $ledgerGuid }}";
                         d.from_date = $('#from_date').val() || "{{ date('Y-m-d') }}"; // Default to current date
                         d.to_date = $('#to_date').val() || "{{ date('Y-m-d') }}";
                     },
@@ -141,7 +151,35 @@
                         }
                     },
                     { data: 'ledger', name: 'ledger'},
-                    { data: 'type', name: 'type' },
+                    {
+                        data: 'type', 
+                        name: 'type',
+                        render: function(data, type, row, meta) {
+                            // Add console.log here to inspect row object
+                            console.log(row); // Log the row object to inspect its contents
+
+                            if (data === 'Bill' || data === 'Rcpt') {
+                                var companyGuid = '{{ $company->guid ?? '' }}'; // Access the guid property of $company
+                                var ledgerGuid = row.ledger_guid; // Here you're accessing ledger_guid from row object
+                                var vchDate = moment(row.voucher_date).format('DD/MM/YYYY');
+                                var vchNumber = row.voucher_number;
+
+                                if (companyGuid) {
+                                    var url = 'http://ledger365.in:10000/get_vch_pdf?company_guid=' + companyGuid +
+                                        '&ledger_guid=' + ledgerGuid +
+                                        '&vch_date=' + vchDate +
+                                        '&vch_number=' + vchNumber +
+                                        '&vch_type=' + data;
+
+                                    return '<a href="' + url + '" style="color: #337ab7;">' + data + '</a>';
+                                } else {
+                                    return data; // Handle the case where companyGuid is empty or null
+                                }
+                            } else {
+                                return data;
+                            }
+                        }
+                    },
                     { data: 'voucher_number', name: 'voucher_number', className: 'dt-body-center' },
                     { data: 'debit_total', name: 'debit_total', className: 'dt-body-right' },
                     { data: 'credit_total', name: 'credit_total', className: 'dt-body-right' },
@@ -176,8 +214,28 @@
                         }
                     }
                 ],
-                order: [[0, 'asc']], // Default sorting by voucher_date
-                paging: false // Remove pagination
+                order: [[0, 'desc']], // Default sorting by voucher_date
+                paging: false, // Remove pagination
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Calculate sum of debit_total
+                    var debitTotal = api.column(4, { page: 'all' }).data()
+                                    .reduce(function (acc, val) {
+                                        return parseFloat(acc) + parseFloat(val);
+                                    }, 0);
+
+                    // Calculate sum of credit_total
+                    var creditTotal = api.column(5, { page: 'all' }).data()
+                                        .reduce(function (acc, val) {
+                                            return parseFloat(acc) + parseFloat(val);
+                                        }, 0);
+
+                    // Update the footer
+                    $(api.column(4).footer()).html(debitTotal.toFixed(2));
+                    $(api.column(5).footer()).html(creditTotal.toFixed(2));
+                }
+        
             });
 
             // Reload DataTable on date change
@@ -210,7 +268,4 @@
             });
         });
     </script>
-    
-    
-    
 @endpush
