@@ -48,30 +48,23 @@ class SocietyController extends Controller
         try {
             DB::beginTransaction();
             
-            // Find the society
             $society = TallyCompany::findOrFail($id);
-            
-            // Extract the base GUID
             $baseGuid = substr($society->guid, 0, 36);
             
-            // Delete related data from TallyGroup and TallyLedger tables
             TallyGroup::where('guid', 'like', $baseGuid . '-%')->delete();
             TallyLedger::where('guid', 'like', $baseGuid . '-%')->delete();
             
-            // Delete the society
             $society->delete();
-
-            // dd($society);
             
             DB::commit();
             
             return response()->json(['success' => 'Society deleted successfully.']);
         } catch (\Exception $e) {
             DB::rollBack();
-            // Handle the exception
             return response()->json(['error' => 'Failed to delete society.']);
         }
     }
+    
     
 
     public function societyDashboard(Request $request)

@@ -48,6 +48,7 @@
                 </div>
             </div>
         </div>
+        
 
         <div class="col-sm-12">
             <div class="card">
@@ -73,6 +74,7 @@
                                     <th>Balance</th>
                                     <th>Total Voucher</th>
                                     <th>First Entry</th>
+                                    <th>Assigned</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -83,6 +85,7 @@
                                     <th colspan="4">Total</th>
                                     <th style="text-align: right"></th>
                                     <th style="text-align: center"></th>
+                                    <th></th>
                                     <th></th>
                                 </tr>
                             </tfoot>
@@ -170,6 +173,48 @@
                             var year = String(date.getFullYear()).slice(-2);
                             return day + '-' + month + '-' + year;
                         }
+                    },
+                    {
+                        data: 'assign_admin',
+                        name: 'assign_admin',
+                        render: function(data, type, row, meta) {
+                            var buttonColorClass = '';
+                            var buttonText = '';
+                            if (data) {
+                                switch (data) {
+                                    case 'Secretary':
+                                        buttonColorClass = 'btn-outline-secondary';
+                                        break;
+                                    case 'Chairman':
+                                        buttonColorClass = 'btn-outline-info';
+                                        break;
+                                    case 'Operator':
+                                        buttonColorClass = 'btn-outline-warning';
+                                        break;
+                                    case 'Members':
+                                        buttonColorClass = 'btn-outline-primary';
+                                        break;
+                                    default:
+                                        buttonColorClass = 'btn-outline-success'; // Default color if none matches
+                                        break;
+                                }
+                                buttonText = data;
+                            } else {
+                                buttonColorClass = 'btn-outline-success';
+                                buttonText = 'Assigned';
+                            }
+                            return `
+                                <div class="btn-group">
+                                    <button class="btn ${buttonColorClass} rounded-pill dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">${buttonText}</button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" onclick="assignRole('${row.guid}', 'Secretary')">Secretary</a></li>
+                                        <li><a class="dropdown-item" onclick="assignRole('${row.guid}', 'Chairman')">Chairman</a></li>
+                                        <li><a class="dropdown-item" onclick="assignRole('${row.guid}', 'Operator')">Operator</a></li>
+                                        <li><a class="dropdown-item" onclick="assignRole('${row.guid}', 'Members')">Members</a></li>
+                                    </ul>
+                                </div>
+                            `;
+                        }
                     }
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
@@ -211,7 +256,33 @@
                     $(api.column(4).footer()).html(balanceTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                     $(api.column(5).footer()).html(vouchersTotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
                 }
+                
             });
+
+            // Function to assign role via AJAX
+            window.assignRole = function(guid, role) {
+                $.ajax({
+                    url: "{{ route('assign-role') }}",
+                    type: 'POST',
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        guid: guid,
+                        role: role
+                    },
+                    success: function(response) {
+                        if (response.message) {
+                            show_toastr('Success', response.message, 'success');
+                            table.ajax.reload(); // Reload DataTable on success
+                        } else if (response.error) {
+                            show_toastr('Error', response.error, 'error');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error(xhr.responseText);
+                        show_toastr('Error', 'Failed to assign role.', 'error');
+                    }
+                });
+            };
     
             // Show DataTable buttons initially
             $('.dt-buttons').show();
@@ -223,6 +294,9 @@
                 $('.dt-buttons').show();
             });
         });
+
+
+
     </script>
     
     

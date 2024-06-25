@@ -66,90 +66,26 @@ class MemberController extends Controller
         }
     }
 
-    
-    
-    // public function getData(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $societyGuid = $request->query('guid');
-    //         $group = $request->query('group');
-    
-    //         $society = TallyCompany::where('guid', 'like', "$societyGuid%")->first();
-    
-    //         if (!$society) {
-    //             return response()->json(['message' => 'Society not found'], 404);
-    //         }
-    
-    //         $query = TallyLedger::where('guid', 'like', $society->guid . '%');
-    
-    //         if ($group == 'Sundry Debtors') {
-    //             $query->where('primary_group', 'Sundry Debtors')
-    //                   ->whereNotNull('alias1')
-    //                   ->where('alias1', '!=', '');
-    //         } else {
-    //             $query->where('primary_group', '!=', 'Sundry Debtors');
-    //         }
-    
-    //         $members = $query->withCount('vouchers')
-    //             ->with('vouchers')
-    //             ->latest()
-    //             ->get()
-    //             ->map(function($member) {
-    //                 $member->first_voucher_date = $member->firstVoucherDate();
-    //                 return $member;
-    //             });
 
+    public function assignRole(Request $request)
+    {
+        if ($request->ajax()) {
+            $guid = $request->input('guid');
+            $role = $request->input('role');
 
-    //             // dd($members);
-    
-    //         return DataTables::of($members)
-    //             ->addIndexColumn()
-    //             ->make(true);
-    //     }
-    // }
-    
+            // Update the assign_admin column in the database
+            $ledger = TallyLedger::where('guid', $guid)->first();
+            if ($ledger) {
+                $ledger->assign_admin = $role;
+                $ledger->save();
 
-    // public function memberOutstandingGetData(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $societyGuid = $request->query('guid');
-    //         $group = $request->query('group');
-    //         $fromDate = $request->query('from_date');
-    //         $toDate = $request->query('to_date');
-    
-    //         $society = TallyCompany::where('guid', 'like', "$societyGuid%")->first();
-    
-    //         if (!$society) {
-    //             return response()->json(['message' => 'Society not found'], 404);
-    //         }
-    
-    //         $query = TallyLedger::where('guid', 'like', $society->guid . '%')
-    //             ->whereNotNull('alias1')
-    //             ->where('alias1', '!=', '');
-    
-    //             if ($fromDate && $toDate) {
-    //                 $query->whereHas('vouchers', function ($q) use ($fromDate, $toDate) {
-    //                     $q->whereBetween('voucher_date', [$fromDate, $toDate]);
-    //                 });
-    //             }
-    
-    //         $members = $query->withCount('vouchers')
-    //             ->with('vouchers')
-    //             ->latest()
-    //             ->get()
-    //             ->map(function ($member) {
-    //                 // Assuming first_voucher_date is a dynamic property/method
-    //                 $member->first_voucher_date = $member->firstVoucherDate();
-    //                 $member->voucher_number = $member->vouchers->first()->voucher_number ?? '';
-    //                 $member->amount = $member->vouchers->first()->amount ?? '';
-    //                 return $member;
-    //             });
-    
-    //         return DataTables::of($members)
-    //             ->addIndexColumn()
-    //             ->make(true);
-    //     }
-    // }
+                return response()->json(['message' => 'Role assigned successfully']);
+            }
 
+            return response()->json(['error' => 'Ledger not found'], 404);
+        }
+
+        return response()->json(['error' => 'Method not allowed'], 405);
+    }
 
 }

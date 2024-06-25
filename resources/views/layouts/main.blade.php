@@ -80,6 +80,10 @@
 
     @include('layouts.partials.topbar')
 
+    <!-- Add this somewhere in your Blade template -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11;"></div>
+
+
     @include('layouts.partials.sidebar')
 
         <div class="page-body">
@@ -146,7 +150,7 @@
      {{-- <script src="{{ asset('assets/js/script.js') }}../assets/js/clipboard/clipboard.min.js"></script>
      <script src="{{ asset('assets/js/script.js') }}../assets/js/custom-card/custom-card.js"></script>
      <script src="{{ asset('assets/js/script.js') }}../assets/js/height-equal.js"></script> --}}
-
+     <script src="{{ asset('assets/js/custom-scripts.js') }}"></script>
      <!-- Plugins JS Ends-->
      <!-- Theme js-->
      <script src="{{ asset('assets/js/script.js') }}"></script>
@@ -154,13 +158,13 @@
      <!-- Plugin used-->
 
 
-     <script>
+      <script>
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('back-button').addEventListener('click', function() {
                 history.back();
             });
         });
-    </script>
+      </script>
 
      @stack('javascript')
    </body>

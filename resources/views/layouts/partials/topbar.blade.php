@@ -209,7 +209,7 @@
                 </div>
               </div>
               <ul class="profile-dropdown onhover-show-div">
-                <li><a href="user-profile.html"><i data-feather="user"></i><span>Account </span></a></li>
+                <li><a href="{{ route('profile.edit') }}"><i data-feather="user"></i><span>Account </span></a></li>
                 <li><a href="email-application.html"><i data-feather="mail"></i><span>Inbox</span></a></li>
                 <li><a href="task.html"><i data-feather="file-text"></i><span>Taskboard</span></a></li>
                 <li><a href="{{ route('profile.edit') }}"><i data-feather="settings"></i><span>Settings</span></a></li>

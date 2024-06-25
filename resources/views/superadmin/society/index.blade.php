@@ -19,6 +19,7 @@
         </div>
     </div>
 </div>
+
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
@@ -56,6 +57,24 @@
                         </table>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body">
+            <div class="modal-toggle-wrapper"> 
+                <h4 class="text-sm-center">Do you really want to delete the file ?</h4>
+                <div class="modal-img"> <img src="{{ asset('assets/images/delete.jpg') }}" alt="delete"></div>
+                <p class="text-sm-center pt-4">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel this time</button>
+                    <button type="button" class="btn btn-danger" id="confirmDelete">Yes delete the record</button>
+                </p>
+            </div>
             </div>
         </div>
     </div>
@@ -104,12 +123,9 @@
                         orderable: false,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            var deleteUrl = "{{ route('society.destroy', ':id') }}";
-                            deleteUrl = deleteUrl.replace(':id', row.id);
-                            return '<button class="btn btn-danger btn-sm delete-society" data-id="' + row.id + '">Delete</button>';
+                            return '<button class="border-0 delete-society" data-id="' + row.id + '" data-bs-toggle="modal" data-bs-target="#deleteModal"><i class="icon-trash" style="color:#F81F58;"></i></button>';
                         }
                     }
-
                 ],
                 dom: 'Blfrtip', // Add the letter 'B' for Buttons
                 buttons: [
@@ -157,36 +173,42 @@
 
             // Toggle DataTable buttons visibility when collapse section is shown/hidden
             $('#collapseProduct').on('shown.bs.collapse', function () {
-                
                 $('.dt-buttons').hide();
             }).on('hidden.bs.collapse', function () {
                 $('.dt-buttons').show();
             });
-        });
-    </script>
-    <script>
-        $(document).on('click', '.delete-society', function() {
-        var societyId = $(this).data('id');
-        var deleteUrl = "{{ route('society.destroy', ':id') }}";
-        deleteUrl = deleteUrl.replace(':id', societyId);
-        
-        if (confirm("Are you sure you want to delete this society?")) {
-            $.ajax({
-                url: deleteUrl,
-                type: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    // Reload the DataTable after deletion
-                    $('#society-datatable').DataTable().ajax.reload();
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    // Handle error if any
-                }
+
+            // Handle delete action
+            var societyIdToDelete;
+            $('#society-datatable').on('click', '.delete-society', function() {
+                societyIdToDelete = $(this).data('id');
             });
-        }
-    });
+
+            $('#confirmDelete').on('click', function() {
+                var deleteUrl = "{{ route('society.destroy', ':id') }}";
+                deleteUrl = deleteUrl.replace(':id', societyIdToDelete);
+
+                $.ajax({
+                    url: deleteUrl,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        $('#deleteModal').modal('hide');
+                            $('#society-datatable').DataTable().ajax.reload();
+                            if(response.success) {
+                                show_toastr('Success', response.success, 'success');
+                            } else if(response.error) {
+                                show_toastr('Error', response.error, 'error');
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error(xhr.responseText);
+                            show_toastr('Error', 'Failed to delete society.', 'error');
+                        }
+                });
+            });
+        });
     </script>
 @endpush

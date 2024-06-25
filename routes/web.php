@@ -43,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/society/get-data', [SocietyController::class, 'getData'])->name('society.get-data');
     Route::get('/society/webpanel', [SocietyController::class, 'societyDashboard'])->name('webpanel.index');
     Route::delete('/society/{id}', [SocietyController::class, 'destroy'])->name('society.destroy');
+    Route::post('/members/assign-role', [MemberController::class, 'assignRole'])->name('assign-role');
 
     Route::get('/members', [MemberController::class, 'index'])->name('members.index');
     Route::get('/members/get-data', [MemberController::class, 'getData'])->name('members.get-data');
